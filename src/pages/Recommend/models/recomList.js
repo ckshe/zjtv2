@@ -22,6 +22,15 @@ export default {
         payload: response.data,
       });
     },
+    *updatePushConfig({ payload }, { call, put }) {
+   	console.log("payload",payload)
+      const response = yield call(updatePushConfig, payload);
+      console.log(response)
+      yield put({
+        type: 'save',
+        payload: response.data,
+      });
+    },
   },
 
   reducers: {

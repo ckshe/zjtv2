@@ -86,9 +86,13 @@ export async function recommendList(params) {
 }
 // 推介详情
 export async function recommendDetails(params) {
-  return request(`${host()}/recommend/detail?${stringify(params)}`);
+  return request(`/recommend/detail?${stringify(params)}`);
 }
-
+//更新推送配置
+export async function updatePushConfig(params) {
+  const data = addMode(params)
+  return request(`${host()}/recommend/updatePushConfig?${stringify(data)}`);
+}
 // export async function removeFakeList(params) {
 //   const { count = 5, ...restParams } = params;
 //   return request(`/api/fake_list?count=${count}`, {
