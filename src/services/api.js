@@ -90,8 +90,13 @@ export async function recommendDetails(params) {
 }
 //更新推送配置
 export async function updatePushConfig(params) {
-  const data = addMode(params)
-  return request(`${host()}/recommend/updatePushConfig?${stringify(data)}`);
+	console.log("updatePushConfig",params)
+  const formData = paramsForm(addMode(params))
+  console.log("updatePushConfig",formData)
+  return request(`${host()}/recommend/updatePushConfig`, {
+    method: 'POST',
+    body: formData,
+  });
 }
 // export async function removeFakeList(params) {
 //   const { count = 5, ...restParams } = params;

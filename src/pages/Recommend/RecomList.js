@@ -12,34 +12,35 @@ const dateFormat = 'YYYY-MM-DD';
 const FormItem = Form.Item;
 const { Option } = Select;
 const { TextArea } = Input;
-const CollectionCreateForm = Form.create()(
-  class extends React.Component {
-  	 getItemsValue = ()=>{    //3、自定义方法，用来传递数据（需要在父组件中调用获取数据）
-        const valus= this.props.form.getFieldsValue();       //4、getFieldsValue：获取一组输入控件的值，如不传入参数，则获取全部组件的值
-        return valus;
-    }
-    render() {
-      const { visible, onCancel, onCreate, form, defaultValue } = this.props;
-      console.log("defaultValue",defaultValue)
-      const { getFieldDecorator } = form;
-      return (
-        <Modal
-          visible={visible}
-          title="推荐内容"
-          onCancel={onCancel}
-          onOk={onCreate}
-          centered
-        >
-          <Form layout="horizontal" wrappedComponentRef={(form) => this.formRef = form}>
-            <FormItem label="描述">
-              {getFieldDecorator('description', { initialValue: defaultValue })(<TextArea  rows={4} />)}
-            </FormItem>
-          </Form>
-        </Modal>
-      );
-    }
-  }
-);
+//const CollectionCreateForm = Form.create()(
+//class extends React.Component {
+//	 getItemsValue = ()=>{    //3、自定义方法，用来传递数据（需要在父组件中调用获取数据）
+//      const valus= this.props.form.getFieldsValue();       //4、getFieldsValue：获取一组输入控件的值，如不传入参数，则获取全部组件的值
+//      return valus;
+//  }
+//  render() {
+//    const { visible, onCancel, onCreate, form, defaultValue } = this.props;
+//    console.log("defaultValue",defaultValue)
+//    const { getFieldDecorator } = form;
+//    return (
+//      <Modal
+//        visible={visible}
+//        title="推荐内容"
+//        onCancel={onCancel}
+//        onOk={onCreate}
+//        centered
+//        
+//      >
+//        <Form layout="horizontal" onSubmit={this.updateDetails}>
+//          <FormItem label="描述">
+//            {getFieldDecorator('description', { initialValue: defaultValue })(<TextArea  rows={4} />)}
+//          </FormItem>
+//        </Form>
+//      </Modal>
+//    );
+//  }
+//}
+//);
 
 @Form.create()
 /* eslint react/no-multi-comp:0 */
@@ -52,13 +53,15 @@ class TableList extends PureComponent {
     expandForm: false,
     formValues: {},
     visible:false,
-    content:''
+    content:'',
+    id:0
   };
 
   componentDidMount() {
     const { dispatch } = this.props;
     dispatch({
       type: 'recommendlist/getRelist',
+      payload: {},
     });
   }
 
@@ -78,7 +81,18 @@ class TableList extends PureComponent {
       payload: params,
     });
   };
-
+// 如果审核请求触发成功时 models的state发生变化 就会执行该生命周期函数
+    // 如果models的state 的review有值则重新请求列表数据
+    componentWillReceiveProps(nextProps){
+    	console.log("nextProps",nextProps)
+        const { dispatch } = this.props;
+        if(nextProps.recommendlist.review){
+            dispatch({
+                type: 'recommendlist/getRelist',
+                payload: {},
+            });
+        }
+    }
   // 重置按钮
   handleFormReset = () => {
     const { form, dispatch } = this.props;
@@ -103,19 +117,32 @@ class TableList extends PureComponent {
   // 查询按钮
   handleSearch = e => {
     e.preventDefault();
-
-    const { dispatch, form } = this.props;
-
-  console.log(this.formRef.getItemsValue());
-
-      dispatch({
-        type: 'recommendlist/getRelist',
-        payload: values,
-      });
+    const {
+    	dispatch,
+    	form
+    } = this.props;
+    form.validateFields((err, fieldsValue) => {
+    	if(err) return;
+    	const values = {
+    		...fieldsValue,
+    	};
+    	this.setState({
+    		formValues: values,
+    	});
+    	dispatch({
+    		type: 'recommendlist/getRelist',
+    		payload: values,
+    	});
+    });
   };
+  
   //查看详情
-	seenDetails = text =>{
-		this.showModal(text);
+	seenDetails = (id,content) =>{
+		this.setState({
+      visible: true,
+      id:id,
+      content:content,
+    });
 	}
 	//跳转页面
 	gotoRecommondDetails(id) {
@@ -126,38 +153,30 @@ class TableList extends PureComponent {
         }
     })
 	}
-	//model弹出框
-	showModal = text => {
-    this.setState({
-      visible: true,
-      content:text
-    });
-  }
+
+
 
   handleOk = (e) => {
-  	const {
-  		dispatch,
-  		form
-  	} = this.props;
-  	form.validateFields((err, fieldsValue) => {
-  		if(err) return;
-  		console.log(fieldsValue);
-  		const values = {
-  			...fieldsValue,
-  		};
-  		console.log(fieldsValue);
-  		this.setState({
-  			visible: false,
-  			content: ''
-  		});
-  		dispatch({
-  			type: 'recommendlist/getRelist',
-  			payload: values
-  		});
-  	});
+  	  e.preventDefault();
+  	  const {
+  	  	form,dispatch,
+  	  } = this.props;
+    form.validateFields((err, fieldsValue) => {
+    	if(err) return;
+    	const values = {
+    		...fieldsValue,
+    		id:this.state.id
+    	};
+    	this.setState({
+    		formValues: values,
+    	});
+    	dispatch({
+    		type: 'recommendlist/updatePushConfig',
+    		payload: values,
+    	});
+    });
   }
-  handleCancel = (e) => {
-    console.log(e);
+  onCancel = (e) => {
     this.setState({
       visible: false,
       content:''
@@ -201,7 +220,7 @@ class TableList extends PureComponent {
           <div>{record.viewmd}M钻</div>
           <div>{recommendType[record.type]}</div>
           <div>{record.add_time}</div>
-          <div><a onClick={() => this.seenDetails(record.content)}>查看内容</a></div>
+          <div><a onClick={() => this.seenDetails(record.id,record.content)}>查看内容</a></div>
         </Fragment>
       ),
     },
@@ -348,7 +367,7 @@ class TableList extends PureComponent {
          	 <Col md={8} sm={24}>
             <FormItem label="开赛时间">
               {getFieldDecorator('match_time')(
-                 <DatePicker format={dateFormat} />
+                <DatePicker format={dateFormat} />
               )}
             </FormItem>
           </Col>
@@ -392,8 +411,8 @@ class TableList extends PureComponent {
     const {
       recommendlist: { data },
       loading,
+      form: { getFieldDecorator },
     } = this.props;
-    console.log("data",data)
     const paginationProps = {
       showSizeChanger: true,
       showQuickJumper: true,
@@ -401,7 +420,6 @@ class TableList extends PureComponent {
     current: parseInt(data.pagination.current),
     total: parseInt(data.pagination.total),
     };
-    console.log("datapagination",data.pagination)
     return (
 	    <Fragment>
 	      <PageHeaderWrapper title="推介列表">
@@ -419,12 +437,25 @@ class TableList extends PureComponent {
 	          </div>
 	        </Card>
 	      </PageHeaderWrapper>
-	      <CollectionCreateForm
-          visible={this.state.visible}
-          onCancel={this.handleCancel}
-          onCreate={this.handleOk}
-          defaultValue = {this.state.content}
-        />
+				<Modal
+		      visible={this.state.visible}
+		      title="推荐内容"
+		      onCancel={this.onCancel}
+		      centered
+		      footer={null}
+		    >
+	       <Form onSubmit={this.handleOk} layout="horizontal">
+				   	<FormItem label="主队名">
+              {getFieldDecorator('content',{initialValue : this.state.content })(<TextArea  rows={4} />)}
+            </FormItem>
+            <div>
+	            <Button key="back" onClick={this.onCancel}>取消</Button>,
+	            <Button key="submit" type="primary"   htmlType="submit">
+	              	更新
+	            </Button>
+            </div>
+	    	</Form>
+	    </Modal>
 	    </Fragment>
     );
   }
