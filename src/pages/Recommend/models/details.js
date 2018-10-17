@@ -1,4 +1,5 @@
-import { recommendDetails } from '@/services/api';
+import { recommendDetails,setReason } from '@/services/api';
+import { message } from 'antd';
 
 export default {
   namespace: 'recommendDetails',
@@ -7,7 +8,7 @@ export default {
     data: {
     	game_info:{},
     	user_info:{},
-    	view_user_list:{}
+    	view_user_list:[]
     },
   },
 
@@ -21,14 +22,36 @@ export default {
       	  payload: response.data,
       	});
     },
+    *setReason({ payload }, { call, put }) {
+   		console.log("撤销推介payload===========",payload)
+      const response = yield call(setReason, payload);
+      if(response.status == 200){
+        message.success("撤销成功",1,function(){});
+        console.log(response)
+	    	yield put({
+	    	  type: 'save',
+	    	  payload: 'review',
+	    	});
+      }else{
+        message.error(response.message);
+      }
+    },
   },
 
   reducers: {
     save(state, action) {
-      return {
-        ...state,
-        data: action.payload,
-      };
+    	if(action.payload=="review"){
+    		return {
+    		  ...state,
+    		  review: action.payload,
+    		};
+    	}else{
+    		return {
+    		  ...state,
+    		  data: action.payload,
+    		  review:''
+    		};
+    	}
     },
   },
 };

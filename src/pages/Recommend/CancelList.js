@@ -7,13 +7,12 @@ import styles from './style.less';
 const { RangePicker } = DatePicker;
 const FormItem = Form.Item;
 const { Option } = Select;
-const payment = ['微信', '支付宝APP', '支付宝手机网页', 'App Store', 'Google Play'];
 
 @Form.create()
 /* eslint react/no-multi-comp:0 */
-@connect(({ diamond, loading }) => ({
-  diamond,
-  loading: loading.models.diamond,
+@connect(({ cancellist, loading }) => ({
+  cancellist,
+  loading: loading.models.cancellist,
 }))
 @Form.create()
 class TableList extends PureComponent {
@@ -24,54 +23,37 @@ class TableList extends PureComponent {
 
   columns = [
     {
-      title: '流水编号',
+      title: '序号',
       align: 'center',
       dataIndex: 'id',
     },
     {
-      title: '用户',
-      render: (_, record) => (
-        <Fragment>
-          <div>账号: {record.username}</div>
-          <div>昵称: {record.nickname}</div>
-          <div>
-            [ID: {record.user_id} | IP: {record.client_ip}]
-          </div>
-        </Fragment>
-      ),
+      title: '管理员',
+      align: 'center',
+      dataIndex: 'admin',
     },
     {
-      title: '时间',
+      title: '推介ID',
       align: 'center',
-      dataIndex: 'add_time',
+      dataIndex: 'recommend_id',
     },
     {
-      title: '操作',
+      title: '撤销原因',
       align: 'center',
-      dataIndex: 'operation',
-      render(val) {
-        return <div>{payment[val]}</div>;
-      },
+      dataIndex: 'reason',
     },
     {
-      title: '类型',
+      title: '撤销时间',
       align: 'center',
-      dataIndex: 'type',
-      render(val) {
-        return <div>{payment[val]}</div>;
-      },
-    },
-    {
-      title: '数额',
-      align: 'center',
-      dataIndex: 'score',
+      dataIndex: 'time',
     },
   ];
 
   componentDidMount() {
     const { dispatch } = this.props;
     dispatch({
-      type: 'diamond/accountList',
+      type: 'cancellist/getCancelList',
+      payload:{}
     });
   }
 
@@ -81,13 +63,13 @@ class TableList extends PureComponent {
     const { formValues } = this.state;
 
     const params = {
-      currentPage: pagination.current,
-      pageSize: pagination.pageSize,
+      page: pagination.current,
+      page_size: pagination.pageSize,
       ...formValues,
     };
 
     dispatch({
-      type: 'diamond/accountList',
+      type: 'cancellist/getCancelList',
       payload: params,
     });
   };
@@ -100,7 +82,7 @@ class TableList extends PureComponent {
       formValues: {},
     });
     dispatch({
-      type: 'diamond/accountList',
+      type: 'cancellist/getCancelList',
       payload: {},
     });
   };
@@ -131,7 +113,7 @@ class TableList extends PureComponent {
       });
 
       dispatch({
-        type: 'diamond/accountList',
+        type: 'cancellist/getCancelList',
         payload: values,
       });
     });
@@ -146,16 +128,16 @@ class TableList extends PureComponent {
       <Form onSubmit={this.handleSearch} layout="inline">
         <Row gutter={{ md: 8, lg: 24, xl: 48 }}>
           <Col md={8} sm={24}>
-            <FormItem label="账号">
-              {getFieldDecorator('name')(<Input placeholder="请输入" />)}
+            <FormItem label="管理员">
+              {getFieldDecorator('admin_name')(<Input placeholder="请输入" />)}
             </FormItem>
           </Col>
-          <Col md={8} sm={24}>
-            <FormItem label="昵称">
-              {getFieldDecorator('name')(<Input placeholder="请输入" />)}
+          <Col md={10} sm={24}>
+  					<FormItem label="选择日期">
+              {getFieldDecorator('date')(<RangePicker style={{ width: '100%' }}  placeholder={['开始日期', '结束日期']} />)}
             </FormItem>
           </Col>
-          <Col md={8} sm={24}>
+          <Col md={6} sm={24}>
             <span className={styles.submitButtons}>
               <Button type="primary" htmlType="submit">
                 查询
@@ -163,12 +145,6 @@ class TableList extends PureComponent {
               <Button style={{ marginLeft: 8 }} onClick={this.handleFormReset}>
                 重置
               </Button>
-              <Button style={{ marginLeft: 8 }} onClick={this.handleFormReset}>
-                导出excel
-              </Button>
-              <a style={{ marginLeft: 8 }} onClick={this.toggleForm}>
-                展开 <Icon type="down" />
-              </a>
             </span>
           </Col>
         </Row>
@@ -177,70 +153,70 @@ class TableList extends PureComponent {
   }
 
   // 展开列表
-  renderAdvancedForm() {
-    const {
-      form: { getFieldDecorator },
-    } = this.props;
-    return (
-      <Form onSubmit={this.handleSearch} layout="inline">
-        <Row gutter={{ md: 8, lg: 24, xl: 48 }}>
-          <Col md={8} sm={24}>
-            <FormItem label="账号">
-              {getFieldDecorator('name')(<Input placeholder="请输入" />)}
-            </FormItem>
-          </Col>
-          <Col md={8} sm={24}>
-            <FormItem label="昵称">
-              {getFieldDecorator('name')(<Input placeholder="请输入" />)}
-            </FormItem>
-          </Col>
-          <Col md={8} sm={24}>
-            <FormItem label="操作">
-              {getFieldDecorator('status')(
-                <Select placeholder="请选择">
-                  <Option value="0">关闭</Option>
-                  <Option value="1">运行中</Option>
-                </Select>
-              )}
-            </FormItem>
-          </Col>
-        </Row>
-        <Row gutter={{ md: 8, lg: 24, xl: 48 }}>
-          <Col md={8} sm={24}>
-            <FormItem label="类型">
-              {getFieldDecorator('status')(
-                <Select placeholder="请选择">
-                  <Option value="1">收入</Option>
-                  <Option value="2">消费</Option>
-                </Select>
-              )}
-            </FormItem>
-          </Col>
-          <Col md={8} sm={24}>
-            <FormItem label="时间范围">
-              {getFieldDecorator('date')(<RangePicker placeholder={['开始日期', '结束日期']} />)}
-            </FormItem>
-          </Col>
-        </Row>
-        <div style={{ overflow: 'hidden' }}>
-          <div style={{ float: 'right', marginBottom: 24 }}>
-            <Button type="primary" htmlType="submit">
-              查询
-            </Button>
-            <Button style={{ marginLeft: 8 }} onClick={this.handleFormReset}>
-              重置
-            </Button>
-            <Button style={{ marginLeft: 8 }} onClick={this.handleFormReset}>
-              导出excel
-            </Button>
-            <a style={{ marginLeft: 8 }} onClick={this.toggleForm}>
-              收起 <Icon type="up" />
-            </a>
-          </div>
-        </div>
-      </Form>
-    );
-  }
+//renderAdvancedForm() {
+//  const {
+//    form: { getFieldDecorator },
+//  } = this.props;
+//  return (
+//    <Form onSubmit={this.handleSearch} layout="inline">
+//      <Row gutter={{ md: 8, lg: 24, xl: 48 }}>
+//        <Col md={8} sm={24}>
+//          <FormItem label="账号">
+//            {getFieldDecorator('name')(<Input placeholder="请输入" />)}
+//          </FormItem>
+//        </Col>
+//        <Col md={8} sm={24}>
+//          <FormItem label="昵称">
+//            {getFieldDecorator('name')(<Input placeholder="请输入" />)}
+//          </FormItem>
+//        </Col>
+//        <Col md={8} sm={24}>
+//          <FormItem label="操作">
+//            {getFieldDecorator('status')(
+//              <Select placeholder="请选择">
+//                <Option value="0">关闭</Option>
+//                <Option value="1">运行中</Option>
+//              </Select>
+//            )}
+//          </FormItem>
+//        </Col>
+//      </Row>
+//      <Row gutter={{ md: 8, lg: 24, xl: 48 }}>
+//        <Col md={8} sm={24}>
+//          <FormItem label="类型">
+//            {getFieldDecorator('status')(
+//              <Select placeholder="请选择">
+//                <Option value="1">收入</Option>
+//                <Option value="2">消费</Option>
+//              </Select>
+//            )}
+//          </FormItem>
+//        </Col>
+//        <Col md={8} sm={24}>
+//          <FormItem label="时间范围">
+//            {getFieldDecorator('date')(<RangePicker placeholder={['开始日期', '结束日期']} />)}
+//          </FormItem>
+//        </Col>
+//      </Row>
+//      <div style={{ overflow: 'hidden' }}>
+//        <div style={{ float: 'right', marginBottom: 24 }}>
+//          <Button type="primary" htmlType="submit">
+//            查询
+//          </Button>
+//          <Button style={{ marginLeft: 8 }} onClick={this.handleFormReset}>
+//            重置
+//          </Button>
+//          <Button style={{ marginLeft: 8 }} onClick={this.handleFormReset}>
+//            导出excel
+//          </Button>
+//          <a style={{ marginLeft: 8 }} onClick={this.toggleForm}>
+//            收起 <Icon type="up" />
+//          </a>
+//        </div>
+//      </div>
+//    </Form>
+//  );
+//}
 
   renderForm() {
     const { expandForm } = this.state;
@@ -249,13 +225,15 @@ class TableList extends PureComponent {
 
   render() {
     const {
-      diamond: { data },
+      cancellist: { data },
       loading,
     } = this.props;
     const paginationProps = {
       showSizeChanger: true,
       showQuickJumper: true,
-      ...data.pagination,
+      pageSize: parseInt(data.pagination.page_size),
+    	current: parseInt(data.pagination.current),
+    	total: parseInt(data.pagination.total),
     };
     return (
       <PageHeaderWrapper title="推介撤销记录">

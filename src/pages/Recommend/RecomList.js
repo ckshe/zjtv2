@@ -2,7 +2,7 @@ import React, { PureComponent, Fragment } from 'react';
 import moment from 'moment';
 import router from 'umi/router';
 import { connect } from 'dva';
-import { Row, Col, Card, Form, Input, Select, Icon, Button, DatePicker, Table,Modal } from 'antd';
+import { Row, Col, Card, Form, Input, Select, Icon, Button, DatePicker, Table, Modal, Alert } from 'antd';
 import PageHeaderWrapper from '@/components/PageHeaderWrapper';
 import styles from './style.less';
 import {recommendType, status, level, sort} from '@/pages/config'
@@ -12,35 +12,7 @@ const dateFormat = 'YYYY-MM-DD';
 const FormItem = Form.Item;
 const { Option } = Select;
 const { TextArea } = Input;
-//const CollectionCreateForm = Form.create()(
-//class extends React.Component {
-//	 getItemsValue = ()=>{    //3、自定义方法，用来传递数据（需要在父组件中调用获取数据）
-//      const valus= this.props.form.getFieldsValue();       //4、getFieldsValue：获取一组输入控件的值，如不传入参数，则获取全部组件的值
-//      return valus;
-//  }
-//  render() {
-//    const { visible, onCancel, onCreate, form, defaultValue } = this.props;
-//    console.log("defaultValue",defaultValue)
-//    const { getFieldDecorator } = form;
-//    return (
-//      <Modal
-//        visible={visible}
-//        title="推荐内容"
-//        onCancel={onCancel}
-//        onOk={onCreate}
-//        centered
-//        
-//      >
-//        <Form layout="horizontal" onSubmit={this.updateDetails}>
-//          <FormItem label="描述">
-//            {getFieldDecorator('description', { initialValue: defaultValue })(<TextArea  rows={4} />)}
-//          </FormItem>
-//        </Form>
-//      </Modal>
-//    );
-//  }
-//}
-//);
+
 
 @Form.create()
 /* eslint react/no-multi-comp:0 */
@@ -167,11 +139,13 @@ class TableList extends PureComponent {
     		...fieldsValue,
     		id:this.state.id
     	};
+    	console.log(values)
     	this.setState({
     		formValues: values,
+    		visible: false,
     	});
     	dispatch({
-    		type: 'recommendlist/updatePushConfig',
+    		type: 'recommendlist/updateContent',
     		payload: values,
     	});
     });
@@ -426,6 +400,15 @@ class TableList extends PureComponent {
 	        <Card bordered={false}>
 	          <div className={styles.tableList}>
 	            <div className={styles.tableListForm}>{this.renderForm()}</div>
+	            <Alert
+	                message={
+	                    <Fragment>
+	                        累计发布{data.header.number}条推介，收入{data.header.income}M钻（不含已撤销的推介）)
+	                    </Fragment>
+	                }
+	                type="info"
+	                showIcon
+	            />
 	            <Table
 	              loading={loading}
 	              rowKey="id"
@@ -444,11 +427,11 @@ class TableList extends PureComponent {
 		      centered
 		      footer={null}
 		    >
-	       <Form onSubmit={this.handleOk} layout="horizontal">
+	       <Form onSubmit={this.handleOk} layout="horizontal" accept-charset ='UTF-8'>
 				   	<FormItem label="主队名">
               {getFieldDecorator('content',{initialValue : this.state.content })(<TextArea  rows={4} />)}
             </FormItem>
-            <div>
+            <div className={styles.modalFoot}>
 	            <Button key="back" onClick={this.onCancel}>取消</Button>,
 	            <Button key="submit" type="primary"   htmlType="submit">
 	              	更新

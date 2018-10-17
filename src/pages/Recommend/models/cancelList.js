@@ -1,4 +1,4 @@
-import { recommendList,updateContent } from '@/services/api';
+import { cancelList } from '@/services/api';
 function consumeListForm(params) {
   var buffer = { page_size: 10, page: 1 };
   typeof (params.page_size) != 'undefined' ? buffer.page_size = params.page_size : '';
@@ -18,39 +18,28 @@ function consumeListForm(params) {
   return buffer;
 }
 export default {
-  namespace: 'recommendlist',
+  namespace: 'cancellist',
 
   state: {
     data: {
       list: [],
       header: {},
       pagination: {
-      	page_size:10,
-      	current:1,
-      	total:0
+
       },
     },
     review:''
   },
 
   effects: {
-    *getRelist({ payload }, { call, put }) {
+    *getCancelList({ payload }, { call, put }) {
    	console.log("payload",payload)
    		const buffer = consumeListForm(payload)
-      const response = yield call(recommendList, buffer);
+      const response = yield call(cancelList, buffer);
       console.log(response)
       yield put({
         type: 'save',
         payload: response.data,
-      });
-    },
-    *updateContent({ payload }, { call, put }) {
-   	console.log("payload",payload)
-      const response = yield call(updateContent, payload);
-      console.log(response)
-      yield put({
-        type: 'save',
-        payload: 'review',
       });
     },
   },

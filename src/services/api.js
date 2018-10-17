@@ -86,7 +86,33 @@ export async function recommendList(params) {
 }
 // 推介详情
 export async function recommendDetails(params) {
-  return request(`/recommend/detail?${stringify(params)}`);
+	const data = addMode(params)
+  return request(`${host()}/recommend/detail?${stringify(data)}`);
+}
+//更改推介内容
+export async function updateContent(params) {
+	console.log("updateContent",params)
+  const formData = paramsForm(addMode(params))
+  console.log("updateContent",formData)
+  return request(`${host()}/recommend/updateContent`, {
+    method: 'POST',
+    body: formData,
+  });
+}
+//撤销推介
+export async function setReason(params) {
+	console.log("setReason",params)
+  const formData = paramsForm(addMode(params))
+  console.log("setReason",formData)
+  return request(`${host()}/recommend/cancel`, {
+    method: 'POST',
+    body: formData,
+  });
+}
+// 撤销推介记录列表
+export async function cancelList(params) {
+  const data = addMode(params)
+  return request(`${host()}/recommend/cancelList?${stringify(data)}`);
 }
 //更新推送配置
 export async function updatePushConfig(params) {

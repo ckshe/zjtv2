@@ -13,36 +13,8 @@ import { level, recommendType } from '@/pages/config'
 const {	Description} = DescriptionList;
 const FormItem = Form.Item;
 const { TextArea } = Input;
-const formItemLayout = {
-  labelCol: { span: 4 },
-  wrapperCol: { span: 8 },
-};
 
-const CollectionCreateForm = Form.create()(
-  class extends React.Component {
-    render() {
-      const { visible, onCancel, onCreate, form } = this.props;
-      const { getFieldDecorator } = form;
-      return (
-        <Modal
-          visible={visible}
-          title="撤销该推介"
-          onCancel={onCancel}
-          onOk={onCreate}
-          centered
-        >
-          <Form layout="">
-            <FormItem label="填写撤销原因">
-              {getFieldDecorator('description')(<TextArea  rows={4} />)}
-            </FormItem>
-          </Form>
-        </Modal>
-      );
-    }
-  }
-);
-
-
+@Form.create()
 @connect(({
 	recommendDetails,
 	loading
@@ -54,7 +26,12 @@ class Details extends Component {
 	state = {
 		visible1: false,
 		visible2: false,
+		formValues: {},
+		reason:'',
+		loading: false,
+		id:0,
 	};
+
 	componentDidMount() {
 		const {
 			dispatch
@@ -64,6 +41,18 @@ class Details extends Component {
 			payload: this.props.location.query
 		});
 	}
+	// 如果审核请求触发成功时 models的state发生变化 就会执行该生命周期函数
+    // 如果models的state 的review有值则重新请求列表数据
+    componentWillReceiveProps(nextProps){
+//  	console.log("nextProps",nextProps)
+        const { dispatch } = this.props;
+        if(nextProps.recommendDetails.review){
+            dispatch({
+                type: 'recommendDetails/getReDetail',
+                payload: this.props.location.query
+            });
+        }
+    }
 	//显示解锁内容
 	showUnlockModal = () => {
 		this.setState({
@@ -77,28 +66,50 @@ class Details extends Component {
 		});
 	}
 	//显示解锁内容
-	showUnlockModal_other = () => {
+	showUnlockModal_other = (id) => {
 		this.setState({
 			visible2: true,
+			id:id
 		});
 	}
-	handleOk_other = (e) => {
-		console.log(e);
-		this.setState({
-			visible2: false,
-		});
-	}
-
 	handleCancel_other = (e) => {
 		console.log(e);
 		this.setState({
 			visible2: false,
 		});
 	}
-	  saveFormRef = (formRef) => {
-	  	console.log('formRef',formRef)
-	    this.formRef = formRef;
-	  }
+
+	handleOk_other = (e) => {
+		e.preventDefault();
+		const {
+			form,
+			dispatch,
+		} = this.props;
+		this.setState({
+			loading: true
+		});
+		setTimeout(() => {
+			form.validateFields((err, fieldsValue) => {
+				if(err) return;
+				const values = {
+					...fieldsValue,
+					id:this.state.id
+				};
+				this.setState({
+					formValues: values,
+				});
+				console.log("fieldsValue==",values)
+				dispatch({
+					type: 'recommendDetails/setReason',
+					payload: values,
+				});
+			});
+			this.setState({
+				loading: false,
+				visible2: false
+			});
+		}, 1000);
+	}
 
 	columns = [{
 		title: '序号',
@@ -119,6 +130,7 @@ class Details extends Component {
 			recommendDetails: {
 				data
 			},
+			form: { getFieldDecorator },
 			loading
 		} = this.props;
 		let recommend_state;
@@ -148,6 +160,7 @@ class Details extends Component {
 			}
 		}
 		const dataSource = data.view_user_list;
+		const cancel_reason = data.cancel_reason;
 		const contentList = {
 			detail: (
 				<Fragment>
@@ -169,7 +182,7 @@ class Details extends Component {
 			            <Description term="推介"><div className={styles.colorRed}>{recommend_state}</div></Description>
 			            <Description term="描述"><div className={styles.text1}>{data.content}</div></Description>
 		          </DescriptionList>
-		          <DescriptionList className={styles.headerList} size="small" col="4">
+		          <DescriptionList className={styles.headerList} size="small" col="3">
 					    <Description term="查看所需M钻">{data.viewmd}</Description>
 					    <Description term="推介类型">{recommendType[data.recommend_type]}</Description>
 					    <Description term="时间">{data.add_time}</Description>
@@ -183,7 +196,7 @@ class Details extends Component {
 		          <Divider style={{ marginBottom: 32 }} />
 			        <div className={styles.headerList}>
 					  <Button type="primary" ghost className={styles.buttonMarginRight} onClick={this.showUnlockModal}>查看解锁用户</Button>
-					  <Button type="primary" ghost onClick={this.showUnlockModal_other}>撤销该条推介</Button>
+					  <Button type="primary" ghost onClick={()=>this.showUnlockModal_other(data.id)}>撤销该条推介</Button>
 					</div>
 					<Link to="/recommend/recommend-list" ><Button type="primary"> 返回</Button></Link>
 					  <Modal title="查看解锁用户" centered  footer={null} visible={this.state.visible1} onOk={this.handleOk}  onCancel={this.handleCancel} >
@@ -197,12 +210,26 @@ class Details extends Component {
 	    	  <Card bordered={false}>
 	          {contentList["detail"]}
 	        </Card>
-	          <CollectionCreateForm
-		          wrappedComponentRef={this.saveFormRef}
-		          visible={this.state.visible2}
-		          onCancel={this.handleOk_other}
-		          onCreate={this.handleCancel_other}
-		        />
+	          
+	    <Modal
+          visible={this.state.visible2}
+          title="撤销该推介"
+          onCancel={this.handleCancel_other}
+          centered
+          footer={null}
+        >
+          <Form layout="horizontal" onSubmit={this.handleOk_other}>
+            <FormItem label="填写撤销原因">
+              {getFieldDecorator('reason',{initialValue : cancel_reason })(<TextArea  rows={4} />)}
+            </FormItem>
+            <div className={styles.modalFoot}>
+	            <Button key="back" onClick={this.handleCancel_other}>取消</Button>,
+	            <Button key="submit" type="primary"  loading={this.state.loading}   htmlType="submit">
+	              	更新
+	            </Button>
+            </div>
+          </Form>
+        </Modal>
 	      </PageHeaderWrapper>
 		);
 	}
