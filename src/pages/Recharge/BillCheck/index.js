@@ -1,26 +1,11 @@
-import React, { Component, Fragment } from 'react';
-import { connect } from 'dva';
+import React, { Component } from 'react';
 import { Form,Card } from 'antd';
 import PageHeaderWrapper from '@/components/PageHeaderWrapper';
-import DefaultList from './DefaultList';
-import IosList from './IosList';
 import router from 'umi/router';
-@connect(({ profile, loading }) => ({
-    profile,
-    loading: loading.effects['profile/fetchBasic'],
-}))
 @Form.create()
-class BasicProfile extends Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-            operationkey: 'defaultList',
-            formLayout: 'horizontal',
-        };
-    }
+class BillCheckIndex extends Component {
     handleTabChange = key => {
         const { match } = this.props;
-        console.log(match.url)
         switch (key) {
             case 'details-list':
                 router.push({
@@ -63,4 +48,4 @@ class BasicProfile extends Component {
     }
 }
 
-export default BasicProfile;
+export default BillCheckIndex;

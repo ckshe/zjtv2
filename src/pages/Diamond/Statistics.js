@@ -9,9 +9,9 @@ const FormItem = Form.Item;
 
 @Form.create()
 /* eslint react/no-multi-comp:0 */
-@connect(({ rechargeList, loading }) => ({
-  rechargeList,
-  loading: loading.models.rechargeList,
+@connect(({ diamond, loading }) => ({
+  diamond,
+  loading: loading.models.diamond,
 }))
 @Form.create()
 class TableList extends PureComponent {
@@ -23,34 +23,35 @@ class TableList extends PureComponent {
     {
       title: '日期',
       align: 'center',
-      dataIndex: 'add_time',
+      dataIndex: 'date',
     },
     {
       title: '7M推介条数',
       align: 'center',
-      dataIndex: 'amount',
+      dataIndex: 'recommend_num',
     },
     {
       title: '7M购买次数',
       align: 'center',
-      dataIndex: 'amount',
+      dataIndex: 'buy_times',
     },
     {
       title: '7M购买人数',
       align: 'center',
-      dataIndex: 'amount',
+      dataIndex: 'buy_num',
     },
     {
       title: '7M销售数(M钻)',
       align: 'center',
-      dataIndex: 'amount',
+      dataIndex: 'sell_score',
     },
   ];
 
   componentDidMount() {
     const { dispatch } = this.props;
     dispatch({
-      type: 'rechargeList/fetch',
+      type: 'diamond/incomeStatistics',
+      payload:{}
     });
   }
 
@@ -60,13 +61,13 @@ class TableList extends PureComponent {
     const { formValues } = this.state;
 
     const params = {
-      currentPage: pagination.current,
-      pageSize: pagination.pageSize,
+      page: pagination.current,
+      page_size: pagination.pageSize,
       ...formValues,
     };
 
     dispatch({
-      type: 'rechargeList/fetch',
+      type: 'diamond/incomeStatistics',
       payload: params,
     });
   };
@@ -79,7 +80,7 @@ class TableList extends PureComponent {
       formValues: {},
     });
     dispatch({
-      type: 'rechargeList/fetch',
+      type: 'diamond/incomeStatistics',
       payload: {},
     });
   };
@@ -101,12 +102,11 @@ class TableList extends PureComponent {
       });
 
       dispatch({
-        type: 'rechargeList/fetch',
+        type: 'diamond/incomeStatistics',
         payload: values,
       });
     });
   };
-
   // 展开列表
   renderSimpleForm() {
     const {
@@ -127,9 +127,9 @@ class TableList extends PureComponent {
             <Button style={{ marginLeft: 8 }} onClick={this.handleFormReset}>
               重置
             </Button>
-            <Button style={{ marginLeft: 8 }} onClick={this.handleFormReset}>
+            {/* <Button style={{ marginLeft: 8 }} onClick={this.handleFormReset}>
               导出excel
-            </Button>
+            </Button> */}
           </Col>
         </Row>
       </Form>
@@ -138,14 +138,16 @@ class TableList extends PureComponent {
 
   render() {
     const {
-      rechargeList: { data },
+      diamond: { incomeStatisticsData },
       loading,
     } = this.props;
-    const paginationProps = {
-      showSizeChanger: true,
-      showQuickJumper: true,
-      ...data.pagination,
-    };
+    // const paginationProps = {
+    //   showSizeChanger: true,
+    //   showQuickJumper: true,
+    //   pageSize: parseInt(data.pagination.page_size),
+    //   current: parseInt(data.pagination.current),
+    //   total: parseInt(data.pagination.total),
+    // };
     return (
       <PageHeaderWrapper title="收益日报表">
         <Card bordered={false}>
@@ -153,11 +155,11 @@ class TableList extends PureComponent {
             <div className={styles.tableListForm}>{this.renderSimpleForm()}</div>
             <Table
               loading={loading}
-              rowKey="id"
-              dataSource={data.list}
+              rowKey={incomeStatisticsData.list.length||''}
+              dataSource={incomeStatisticsData.list}
               columns={this.columns}
-              pagination={paginationProps}
-              onChange={this.handleStandardTableChange}
+              // pagination={paginationProps}
+              // onChange={this.handleStandardTableChange}
             />
           </div>
         </Card>

@@ -1,6 +1,5 @@
 import React, { PureComponent, Fragment } from 'react';
 import { connect } from 'dva';
-import router from 'umi/router';
 import {
     Row,
     Col,
@@ -8,32 +7,25 @@ import {
     Form,
     Input,
     Select,
-    Icon,
     Button,
     DatePicker,
-    Badge,
     Table
 } from 'antd';
-import StandardTable from '@/components/StandardTable';
 import PageHeaderWrapper from '@/components/PageHeaderWrapper';
 
 import styles from './Record.less';
 const { RangePicker } = DatePicker;
 const FormItem = Form.Item;
 const { Option } = Select;
-const getValue = obj =>
-    Object.keys(obj)
-        .map(key => obj[key])
-        .join(',');
 const description = ["","新增订单", "订单审核通过", "订单审核不通过", "修改订单状态", "修改订单备注","删除订单备注","删除订单"]
 
 
 @Form.create()
 
 /* eslint react/no-multi-comp:0 */
-@connect(({ orderRecord, loading }) => ({
-    orderRecord,
-    loading: loading.models.orderRecord,
+@connect(({ orderOperationLog, loading }) => ({
+    orderOperationLog,
+    loading: loading.models.orderOperationLog,
 }))
 @Form.create()
 
@@ -64,9 +56,6 @@ class TableList extends PureComponent {
             title: '描述',
             align: 'center',
             dataIndex: 'description',
-            render(val) {
-                return <div>{description[val]}</div>
-            },
         },
         {
             title: '操作人',
@@ -83,33 +72,24 @@ class TableList extends PureComponent {
     componentDidMount() {
         const { dispatch } = this.props;
         dispatch({
-            type: 'orderRecord/fetch',
+            type: 'orderOperationLog/list',
+            payload: {},
         });
 
     }
     // StandardTable组件里面的Table组件 点击分页触发
-    handleStandardTableChange = (pagination, filtersArg, sorter) => {
+    handleStandardTableChange = (pagination) => {
         const { dispatch } = this.props;
         const { formValues } = this.state;
 
-        const filters = Object.keys(filtersArg).reduce((obj, key) => {
-            const newObj = { ...obj };
-            newObj[key] = getValue(filtersArg[key]);
-            return newObj;
-        }, {});
-
         const params = {
-            currentPage: pagination.current,
-            pageSize: pagination.pageSize,
+            page: pagination.current,
+            page_size: pagination.pageSize,
             ...formValues,
-            ...filters,
         };
-        if (sorter.field) {
-            params.sorter = `${sorter.field}_${sorter.order}`;
-        }
 
         dispatch({
-            type: 'orderRecord/fetch',
+            type: 'orderOperationLog/list',
             payload: params,
         });
     };
@@ -122,22 +102,8 @@ class TableList extends PureComponent {
             formValues: {},
         });
         dispatch({
-            type: 'orderRecord/fetch',
+            type: 'orderOperationLog/list',
             payload: {},
-        });
-    };
-
-    // 展开收起事件
-    toggleForm = () => {
-        const { expandForm } = this.state;
-        this.setState({
-            expandForm: !expandForm,
-        });
-    };
-
-    handleSelectRows = rows => {
-        this.setState({
-            selectedRows: rows,
         });
     };
 
@@ -159,14 +125,31 @@ class TableList extends PureComponent {
             });
 
             dispatch({
-                type: 'orderRecord/fetch',
+                type: 'orderOperationLog/list',
                 payload: values,
             });
         });
     };
-    onChange(date, dateString) {
-        console.log(date, dateString);
-    }
+
+    // 导出excel表格
+    handleFormExcel = e => {
+        e.preventDefault();
+        const { dispatch, form } = this.props;
+
+        form.validateFields((err, fieldsValue) => {
+            if (err) return;
+            const values = {
+                ...fieldsValue,
+                export: 1
+            };
+
+            dispatch({
+                type: 'orderOperationLog/list',
+                payload: values,
+            });
+        });
+    };
+
     // 展开列表
     renderSimpleForm() {
         const {
@@ -177,12 +160,12 @@ class TableList extends PureComponent {
                 <Row gutter={{ md: 8, lg: 24, xl: 48 }}>
                     <Col md={8} sm={24}>
                         <FormItem label="操作人">
-                            {getFieldDecorator('name')(<Input placeholder="请输入" />)}
+                            {getFieldDecorator('operator')(<Input placeholder="请输入" />)}
                         </FormItem>
                     </Col>
                     <Col md={8} sm={24}>
                         <FormItem label="操作类型">
-                            {getFieldDecorator('status')(
+                            {getFieldDecorator('type')(
                                 <Select placeholder="请选择" style={{ width: '100%' }}>
                                     <Option value="1">新增订单</Option>
                                     <Option value="2">订单审核通过</Option>
@@ -203,7 +186,7 @@ class TableList extends PureComponent {
                     <div style={{ float: 'right', marginBottom: 24 }}>
                         <Button type="primary" htmlType="submit">查询</Button>
                         <Button style={{ marginLeft: 8 }} onClick={this.handleFormReset}>重置</Button>
-                        <Button style={{ marginLeft: 8 }} onClick={this.handleFormReset}>导出excel</Button>
+                        <Button style={{ marginLeft: 8 }} onClick={this.handleFormExcel}>导出excel</Button>
                     </div>
                 </Row>
             </Form>
@@ -217,13 +200,15 @@ class TableList extends PureComponent {
 
     render() {
         const {
-            orderRecord: { data },
+            orderOperationLog: { data },
             loading,
         } = this.props;
         const paginationProps = {
             showSizeChanger: true,
             showQuickJumper: true,
-            ...data.pagination,
+            pageSize: parseInt(data.pagination.page_size),
+            current: parseInt(data.pagination.current),
+            total: parseInt(data.pagination.total),
         };
         const { selectedRows } = this.state;
         return (

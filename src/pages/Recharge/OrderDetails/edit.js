@@ -15,13 +15,13 @@ class rechargeOrderEdit extends Component {
     state = {
         formLayout: 'horizontal',
     };
-    // componentDidMount() {
-    //     const { dispatch } = this.props;
-    //     dispatch({
-    //         type: 'reachargDetails/fetch',
-    //         payload: this.props.location.query
-    //     });
-    // }
+    componentDidMount() {
+        const { dispatch } = this.props;
+        dispatch({
+            type: 'reachargDetails/fetch',
+            payload: this.props.location.query
+        });
+    }
     handleSubmit = e => {
         const { dispatch, form } = this.props;
         e.preventDefault();
@@ -40,7 +40,9 @@ class rechargeOrderEdit extends Component {
     render() {
         const {
             form: { getFieldDecorator },
+            reachargDetails: { data },
         } = this.props;
+        console.log(data)
         const { formLayout } = this.state;
         const formItemLayout = formLayout === 'horizontal' ? {
             labelCol: { span: 3 },
@@ -54,6 +56,7 @@ class rechargeOrderEdit extends Component {
                 <Form onSubmit={this.handleSubmit}>
                     <FormItem {...formItemLayout} label="订单状态">
                         {getFieldDecorator('status', {
+                            initialValue:data.status+'',
                             rules: [{ required: true, message: '请选择订单状态' }],
                         })(
                             <Select placeholder="请选择" >
@@ -64,7 +67,9 @@ class rechargeOrderEdit extends Component {
                         )}
                     </FormItem>
                     <FormItem {...formItemLayout} label="备注">
-                        {getFieldDecorator('remark')(
+                        {getFieldDecorator('remark',{
+                            initialValue:data.remark,
+                        })(
                             <TextArea
                                 style={{ minHeight: 32 }}
                                 placeholder="请输入备注"

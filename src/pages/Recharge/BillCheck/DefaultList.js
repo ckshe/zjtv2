@@ -6,21 +6,19 @@ import {
     Col,
     Card,
     Form,
-    Input,
     Select,
     Icon,
     Button,
     DatePicker,
     Badge,
     Table,
-    Popconfirm,
-    message,
-    Checkbox,
     Upload,
     Alert,
-    Tag
+    Tag,
+    Switch
 } from 'antd';
-
+import moment from 'moment';
+const dateFormat = 'YYYY/MM/DD';
 import styles from '../Record.less';
 const { RangePicker } = DatePicker;
 const { CheckableTag } = Tag;
@@ -33,19 +31,22 @@ const payment = ["微信", "支付宝APP", "支付宝手机网页", "App Store",
 @Form.create()
 
 /* eslint react/no-multi-comp:0 */
-@connect(({ rechargeList, loading }) => ({
-    rechargeList,
-    loading: loading.models.rechargeList,
+@connect(({ billCheck, loading }) => ({
+    billCheck,
+    loading: loading.models.billCheck,
 }))
 @Form.create()
 
 class BillCheckDefaultList extends PureComponent {
     state = {
-        formValues: {},
-        stepFormValues: {},
+        formValues: {
+            bill: '',
+            date: '',
+            pay_type: '',
+            show_error: ''
+        },
         uploading: false,
         fileList: [],
-        checked: false
     };
 
 
@@ -53,7 +54,7 @@ class BillCheckDefaultList extends PureComponent {
         {
             title: '后台时间',
             align: 'center',
-            dataIndex: 'add_time',
+            dataIndex: 'backstage_time',
         },
         {
             title: '用户',
@@ -61,19 +62,19 @@ class BillCheckDefaultList extends PureComponent {
                 <Fragment>
                     <div>账号: {record.username}</div>
                     <div>昵称: {record.nickname}</div>
-                    <div>[ID: {record.user_id} | IP: {record.client_ip}]</div>
+                    <div>ID: {record.user_id}</div>
                 </Fragment>
             )
         },
         {
             title: '后台金额',
             align: 'center',
-            dataIndex: 'amount',
+            dataIndex: 'backstage_amount',
         },
         {
             title: '对应钻数',
             align: 'center',
-            dataIndex: 'score',
+            dataIndex: 'backstage_score',
         },
         {
             title: '支付方式',
@@ -86,79 +87,30 @@ class BillCheckDefaultList extends PureComponent {
         {
             title: '第三方ID',
             align: 'center',
-            render: (_, record) => (
-                <Fragment>
-                    <div>[{record.ping_id}]</div>
-                </Fragment>
-            )
+            dataIndex: 'third_party_id',
         },
         {
             title: '第三方金额',
             align: 'center',
-            render: (_, record) => (
-                <Fragment>
-                    <div>1500</div>
-                </Fragment>
-            )
+            dataIndex: 'third_party_amount',
         },
         {
             title: '第三方时间',
             align: 'center',
-            render: (_, record) => (
-                <Fragment>
-                    <div>2018-01-01</div>
-                </Fragment>
-            )
+            dataIndex: 'third_party_time',
         },
         {
             title: '匹配结果',
             align: 'center',
-            render: (_, record) => (
-                <Fragment>
-                    <div>匹配正常</div>
-                </Fragment>
-            )
+            dataIndex: 'match_status',
+            render(val) {
+                return <div>{
+                    val==1?(<span>匹配正常</span>):
+                           (<span style={{color:"red"}}>匹配异常</span>)}
+                        </div>
+            },
         }
     ];
-
-    componentDidMount() {
-        const { dispatch } = this.props;
-        dispatch({
-            type: 'rechargeList/fetch',
-            payload: {},
-        });
-
-    }
-
-    // StandardTable组件里面的Table组件 点击分页触发
-    handleStandardTableChange = (pagination) => {
-        const { dispatch } = this.props;
-        const { formValues } = this.state;
-
-        const params = {
-            currentPage: pagination.current,
-            pageSize: pagination.pageSize,
-            ...formValues,
-        };
-
-        // dispatch({
-        //     type: 'rechargeList/fetch',
-        //     payload: params,
-        // });
-    };
-
-    // 重置按钮
-    handleFormReset = () => {
-        const { form, dispatch } = this.props;
-        form.resetFields();
-        this.setState({
-            formValues: {},
-        });
-        // dispatch({
-        //     type: 'rechargeList/fetch',
-        //     payload: {},
-        // });
-    };
 
     // 查询按钮
     handleSearch = e => {
@@ -168,34 +120,63 @@ class BillCheckDefaultList extends PureComponent {
 
         form.validateFields((err, fieldsValue) => {
             if (err) return;
-            console.log(fieldsValue)
             const values = {
                 ...fieldsValue,
             };
-
+            // console.log(values)
             this.setState({
                 formValues: values,
+                uploading:true
             });
-
-            // dispatch({
-            //     type: 'rechargeList/fetch',
-            //     payload: values,
-            // });
+            dispatch({
+                type: 'billCheck/defaultList',
+                payload: values,
+            });
         });
     };
-    onChangeCheckbox = (checked) => {
-        this.setState({ checked });
-        console.log(checked)
-    }
+    // 导出excel表格
+    handleFormExcel = e => {
+        e.preventDefault();
+        const { dispatch, form } = this.props;
 
+        form.validateFields((err, fieldsValue) => {
+            if (err) return;
+            const values = {
+                ...fieldsValue,
+                export: 1
+            };
+
+            dispatch({
+                type: 'billCheck/defaultList',
+                payload: values,
+            });
+        });
+    };
+    onChangeSwitch = (checked) => {
+        const { dispatch, form } = this.props;
+
+        form.validateFields((err, fieldsValue) => {
+            if (err) return;
+            const values = {
+                ...fieldsValue,
+                show_error: checked
+            };
+
+            dispatch({
+                type: 'billCheck/defaultList',
+                payload: values,
+            });
+        });
+    }
     // 收起列表
     renderSimpleForm() {
         const {
             form: { getFieldDecorator },
         } = this.props;
-        const { uploading } = this.state;
+        // const { uploading } = this.state;
         const props = {
-            action: '//jsonplaceholder.typicode.com/posts/',
+            action: '',
+            accept: ".xlsx",
             onRemove: (file) => {
                 this.setState(({ fileList }) => {
                     const index = fileList.indexOf(file);
@@ -220,102 +201,64 @@ class BillCheckDefaultList extends PureComponent {
                     <Row gutter={{ md: 8, lg: 24, xl: 48 }}>
                         <Col md={8} sm={24}>
                             <FormItem label="支付类型">
-                                {getFieldDecorator('name')(<Input placeholder="请输入" />)}
+                                {getFieldDecorator('pay_type')(
+                                    <Select placeholder="请选择" style={{ width: '100%' }}>
+                                        <Option value="1">微信</Option>
+                                        <Option value="2">支付宝 APP</Option>
+                                        <Option value="3">支付宝手机网页</Option>
+                                        <Option value="4">App Store</Option>
+                                        <Option value="5">Google Play</Option>
+                                    </Select>
+                                )}
                             </FormItem>
                         </Col>
                         <Col md={8} sm={24}>
                             <FormItem label="时间范围">
-                                {getFieldDecorator('date')(<RangePicker placeholder={['开始日期', '结束日期']} />)}
+                                {getFieldDecorator('date')(<RangePicker format={dateFormat} placeholder={['开始日期', '结束日期']} />)}
+                            </FormItem>
+                        </Col>
+                        <Col md={8} sm={24}>
+                            <FormItem label="账单导入">
+                                {getFieldDecorator('bill')(
+                                    <Upload {...props}>
+                                        <Button><Icon type="upload" />导入</Button>
+                                    </Upload>
+                                )}
+                            </FormItem>
+                        </Col>
+                    </Row>
+                    <Row gutter={{ md: 8, lg: 24, xl: 48 }}>
+
+                        <Col md={8} sm={24}>
+                            <FormItem label="只显示异常">
+                                {getFieldDecorator('show_error', { valuePropName: 'checked' })(
+                                    <Switch onChange={this.onChangeSwitch}/>
+                                )}
                             </FormItem>
                         </Col>
                         <Col md={8} sm={24}>
                             <span className={styles.submitButtons}>
-                                <Button type="primary" htmlType="submit">查询</Button>
-                                <Button style={{ marginLeft: 8 }} onClick={this.handleFormReset}>重置</Button>
-                                <Button style={{ marginLeft: 8 }} onClick={this.handleFormReset}>导出excel</Button>
+                                <Button type="primary"
+                                    htmlType="submit"
+                                    disabled={this.state.fileList.length === 0}
+                                    // loading={uploading}
+                                    >
+                                    匹配核对账单
+                                    {/* {uploading ? '匹配核对账单中' : '匹配核对账单'} */}
+                                </Button>
+                                <Button style={{ marginLeft: 8 }} onClick={this.handleFormExcel}>导出excel</Button>
                             </span>
                         </Col>
                     </Row>
                 </Form>
-                <Row gutter={{ md: 8, lg: 24, xl: 48 }}>
-                    <Col md={5} sm={14}>
-                        <span className={styles.submitButtons}>
-                            <span>账单导入 : &nbsp;&nbsp;&nbsp;</span>
-                            <Upload {...props}>
-                                <Button><Icon type="upload" />导入</Button>
-                            </Upload>
-                        </span>
-                    </Col>
-                    <Col md={3} sm={10}>
-                        <Button
-                            type="primary"
-                            onClick={this.handleUpload}
-                            disabled={this.state.fileList.length === 0}
-                            loading={uploading}
-                        >
-                            {uploading ? '匹配中...' : '匹配核对账单'}
-                        </Button>
-                    </Col>
-
-                </Row>
-                <Row gutter={{ md: 8, lg: 24, xl: 48 }}>
-                    <Col md={8} sm={24}>
-                        <span className={styles.submitButtons}>
-                            <span>显示异常 : &nbsp;&nbsp;&nbsp;</span>
-                            <CheckableTag
-                                style={{ border: "1px solid #ddd", fontSize: "14px" }}
-                                checked={this.state.checked}
-                                onChange={this.onChangeCheckbox}>
-                                只显示异常
-                            </CheckableTag>
-                        </span>
-                    </Col>
-                </Row>
             </Fragment >
         );
     }
-
-    handleUpload = () => {
-        const { fileList } = this.state;
-        const { dispatch } = this.props;
-        const formData = new FormData();
-        fileList.forEach((file) => {
-            formData.append('files[]', file);
-        });
-
-        this.setState({
-            uploading: true,
-        });
-        dispatch({
-            type: 'billCheck/default',
-            payload: {},
-        });
-        // You can use any AJAX library you like
-        reqwest({
-            url: '//jsonplaceholder.typicode.com/posts/',
-            method: 'post',
-            processData: false,
-            data: formData,
-            success: () => {
-                this.setState({
-                    fileList: [],
-                    uploading: false,
-                });
-                message.success('upload successfully.');
-            },
-            error: () => {
-                this.setState({
-                    uploading: false,
-                });
-                message.error('upload failed.');
-            },
-        });
-    }
     render() {
-        // const {
-        //     rechargeList: { data },
-        //     loading,
-        // } = this.props;
+        const {
+            billCheck: { defaultData },
+            loading,
+        } = this.props;
         // const paginationProps = {
         //     showSizeChanger: true,
         //     showQuickJumper: true,
@@ -326,25 +269,31 @@ class BillCheckDefaultList extends PureComponent {
                 <div className={styles.tableList}>
                     <div className={styles.tableListForm}>{this.renderSimpleForm()}</div>
                     <div className={styles.tableAlert}>
-                        <Alert
+                    {
+                        defaultData.header.backstage_count?(
+                            <Alert
                             message={
                                 <Fragment>
-                                    已选择 0 项&nbsp;&nbsp;
+                                    后台收入统计{defaultData.header.backstage_count}元,
+                                    第三方收入统计{defaultData.header.third_party_count}元,
+                                    金额差异为{defaultData.header.diff}
                                 </Fragment>
                             }
                             type="info"
                             showIcon
                         />
-
+                        ):("")
+                    }
                     </div>
-                    {/* <Table
-                        // loading={loading}
-                        rowKey={'id'}
-                        dataSource={[]}
-                        // columns={this.columns}
+                    <Table
+                        loading={loading}
+                        key={defaultData.list.length || ''}
+                        dataSource={defaultData.list}
+                        columns={this.columns}
+                        bordered
                         // pagination={paginationProps}
-                        onChange={this.handleStandardTableChange}
-                    /> */}
+                        // onChange={this.handleStandardTableChange}
+                    />
                 </div>
             </Card>
         );

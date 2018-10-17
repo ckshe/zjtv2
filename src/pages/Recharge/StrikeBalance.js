@@ -90,10 +90,10 @@ class TableList extends PureComponent {
             align: 'center',
             render: (_, record) => (
                 <Fragment>
-                    <Popconfirm title="你确定通过吗?" onConfirm={this.confirm} onCancel={this.cancel} okText="确定" cancelText="取消">
+                    <Popconfirm title="你确定通过吗?" onConfirm={() => this.confirm({ id: record.id, status: 1 })} onCancel={this.cancel} okText="确定" cancelText="取消">
                         <a href="#">通过</a>
                     </Popconfirm>
-                    <Popconfirm title="你确定拒绝通过?" onConfirm={this.confirm} onCancel={this.cancel} okText="确定" cancelText="取消">
+                    <Popconfirm title="你确定拒绝通过?" onConfirm={() => this.confirm({ id: record.id, status: 2 })} onCancel={this.cancel} okText="确定" cancelText="取消">
                         <a style={{ marginLeft: 8 }} href="#">不通过</a>
                     </Popconfirm>
                 </Fragment>
@@ -108,17 +108,27 @@ class TableList extends PureComponent {
             payload: {},
         });
     }
-
+    // 如果审核请求触发成功时 models的state发生变化 就会执行该生命周期函数
+    // 如果models的state 的review有值则重新请求列表数据
+    componentWillReceiveProps(nextProps){
+        const { dispatch } = this.props;
+        if(nextProps.strikeBalance.review){
+            dispatch({
+                type: 'strikeBalance/list',
+                payload: {},
+            });
+        }
+    }
     // 气泡确认按钮
-    confirm(e) {
-        console.log(e);
-        message.success('Click on Yes');
+    confirm(values) {
+        const { dispatch } = this.props;
+        dispatch({
+            type: 'strikeBalance/review',
+            payload: values,
+        });
     }
     // 气泡取消
-    cancel(e) {
-        console.log(e);
-        message.error('Click on No');
-    }
+    cancel(e) {}
 
     // StandardTable组件里面的Table组件 点击分页触发
     handleStandardTableChange = (pagination) => {

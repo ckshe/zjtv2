@@ -1,5 +1,5 @@
-import { strikeBalanceList, strikeBalanceAdd } from '@/services/api';
-import router from 'umi/router';
+import { strikeBalanceList, strikeBalanceAdd,strikeBalanceReview } from '@/services/api';
+import { router } from 'umi/router';
 import { message } from 'antd';
 
 function paramsListForm(params) {
@@ -25,6 +25,7 @@ export default {
       header: {},
       pagination: {},
     },
+    review:''
   },
 
   effects: {
@@ -41,24 +42,44 @@ export default {
         }
       }
     },
-    *add({ payload }, { call }) {
-      const response = yield call(strikeBalanceAdd, payload);
+    *review({ payload }, { call,put }) {
+      const response = yield call(strikeBalanceReview, payload);
       if (response.status == 200) {
-        message.success(response.message, 1, function () {
-          router.push(`/recharge/review`);
+        message.success(response.message,1);
+        yield put({
+          type: 'save',
+          payload: 'review',
         });
       } else {
         message.error(response.message);
       }
     },
+    *add({ payload }, { call }) {
+      const response = yield call(strikeBalanceAdd, payload);
+      if (response.status == 200) {
+        message.success(response.message,1,function(){
+          router.replace(`/recharge/strike-balance`)
+        });
+      } else {
+        message.error(response.message);
+      }
+    }
   },
 
   reducers: {
     save(state, action) {
-      return {
-        ...state,
-        data: action.payload,
-      };
+      if(action.payload == 'review'){
+        return {
+          ...state,
+          review: action.payload,
+        };
+      }else{
+        return {
+          ...state,
+          data: action.payload,
+          review:''
+        };
+      }
     },
   },
 };

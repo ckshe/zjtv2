@@ -11,7 +11,6 @@ export default {
   'menu.recharge.orderdetails.rechargeEdit': '订单详情(编辑)',
   'menu.recharge.strikebalance': '冲账列表',
   'menu.recharge.rechargeform': '冲账充值',
-  'menu.recharge.review': '冲账审核',
   'menu.recharge.billcheck': '账单核对',
   'menu.recharge.billcheck.detailslist': '账单核对列表',
   'menu.recharge.billcheck.ioslist': '苹果内购账单核对列表',

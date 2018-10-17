@@ -12,9 +12,6 @@ const statusMap = ['warning', 'success', 'error'];
 const status = ["未付款", "已完成", "已取消"];
 const payment = ["", "微信", "支付宝APP", "支付宝手机网页", "App Store", "Google Play"]
 
-
-@Form.create()
-
 /* eslint react/no-multi-comp:0 */
 @connect(({ rechargeList, loading }) => ({
     rechargeList,
@@ -402,10 +399,10 @@ class Record extends PureComponent {
                                         累计销售{data.header.score_count}M钻,
                                         总收入{data.header.amount_count}元。
                                         {
-                                            data.header.over_recharge_count ?
-                                            (<a onClick={this.showModalVisible}>
-                                                注意：24小时内有{data.header.over_recharge_count}个用户连续充值超过1800元
-                                            </a>):("")
+                                            data.header.over_recharge_count > 0 ?
+                                                (<a onClick={this.showModalVisible}>
+                                                    注意：24小时内有{data.header.over_recharge_count}个用户连续充值超过1800元
+                                            </a>) : ("")
                                         }
                                     </Fragment>
                                 }
@@ -428,9 +425,11 @@ class Record extends PureComponent {
                             onOk={this.hideModalVisible}
                             onCancel={this.hideModalVisible}
                         >
-                            <p>Some contents...</p>
-                            <p>Some contents...</p>
-                            <p>Some contents...</p>
+                            {
+                                (data.header.over_recharge_list || []).map((username) => {
+                                    return <span>{username}&nbsp;&nbsp;&nbsp;&nbsp;</span>
+                                })
+                            }
                         </Modal>
                     </div>
                 </Card>

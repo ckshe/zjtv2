@@ -1,13 +1,13 @@
 import React, { PureComponent, Fragment } from 'react';
 import { connect } from 'dva';
-import { Row, Col, Card, Form, Input, Select, Icon, Button, DatePicker, Table } from 'antd';
+import { Row, Col, Alert, Card, Form, Input, Select, Icon, Button, DatePicker, Table } from 'antd';
 import PageHeaderWrapper from '@/components/PageHeaderWrapper';
 import styles from './style.less';
 
 const { RangePicker } = DatePicker;
 const FormItem = Form.Item;
 const { Option } = Select;
-const payment = ['微信', '支付宝APP', '支付宝手机网页', 'App Store', 'Google Play'];
+const payment = ['', '收入', '消费'];
 
 @Form.create()
 /* eslint react/no-multi-comp:0 */
@@ -49,9 +49,6 @@ class TableList extends PureComponent {
       title: '操作',
       align: 'center',
       dataIndex: 'operation',
-      render(val) {
-        return <div>{payment[val]}</div>;
-      },
     },
     {
       title: '类型',
@@ -72,6 +69,7 @@ class TableList extends PureComponent {
     const { dispatch } = this.props;
     dispatch({
       type: 'diamond/accountList',
+      payload: {},
     });
   }
 
@@ -81,8 +79,8 @@ class TableList extends PureComponent {
     const { formValues } = this.state;
 
     const params = {
-      currentPage: pagination.current,
-      pageSize: pagination.pageSize,
+      page: pagination.current,
+      page_size: pagination.pageSize,
       ...formValues,
     };
 
@@ -137,6 +135,24 @@ class TableList extends PureComponent {
     });
   };
 
+  // 导出excel表格
+  handleFormExcel = e => {
+    e.preventDefault();
+    const { dispatch, form } = this.props;
+
+    form.validateFields((err, fieldsValue) => {
+      if (err) return;
+      const values = {
+        ...fieldsValue,
+        export: 1
+      };
+
+      dispatch({
+        type: 'diamond/accountList',
+        payload: values,
+      });
+    });
+  };
   // 收起列表
   renderSimpleForm() {
     const {
@@ -147,12 +163,12 @@ class TableList extends PureComponent {
         <Row gutter={{ md: 8, lg: 24, xl: 48 }}>
           <Col md={8} sm={24}>
             <FormItem label="账号">
-              {getFieldDecorator('name')(<Input placeholder="请输入" />)}
+              {getFieldDecorator('username')(<Input placeholder="请输入" />)}
             </FormItem>
           </Col>
           <Col md={8} sm={24}>
             <FormItem label="昵称">
-              {getFieldDecorator('name')(<Input placeholder="请输入" />)}
+              {getFieldDecorator('nickname')(<Input placeholder="请输入" />)}
             </FormItem>
           </Col>
           <Col md={8} sm={24}>
@@ -163,7 +179,7 @@ class TableList extends PureComponent {
               <Button style={{ marginLeft: 8 }} onClick={this.handleFormReset}>
                 重置
               </Button>
-              <Button style={{ marginLeft: 8 }} onClick={this.handleFormReset}>
+              <Button style={{ marginLeft: 8 }} onClick={this.handleFormExcel}>
                 导出excel
               </Button>
               <a style={{ marginLeft: 8 }} onClick={this.toggleForm}>
@@ -186,20 +202,37 @@ class TableList extends PureComponent {
         <Row gutter={{ md: 8, lg: 24, xl: 48 }}>
           <Col md={8} sm={24}>
             <FormItem label="账号">
-              {getFieldDecorator('name')(<Input placeholder="请输入" />)}
+              {getFieldDecorator('username')(<Input placeholder="请输入" />)}
             </FormItem>
           </Col>
           <Col md={8} sm={24}>
             <FormItem label="昵称">
-              {getFieldDecorator('name')(<Input placeholder="请输入" />)}
+              {getFieldDecorator('nickname')(<Input placeholder="请输入" />)}
             </FormItem>
           </Col>
           <Col md={8} sm={24}>
             <FormItem label="操作">
-              {getFieldDecorator('status')(
+              {getFieldDecorator('operation')(
                 <Select placeholder="请选择">
-                  <Option value="0">关闭</Option>
-                  <Option value="1">运行中</Option>
+                  <Option value="1">用户支付查看推介</Option>
+                  <Option value="2">用户M钻充值</Option>
+                  <Option value="3">专家赚取付费推介</Option>
+                  <Option value="4">用户竞猜解锁</Option>
+                  <Option value="5">用户连续签到奖励</Option>
+                  <Option value="6">充值活动赠送</Option>
+                  <Option value="7">系统赠送</Option>
+                  <Option value="8">系统返还</Option>
+                  <Option value="9">当日第二次以上撤销推介时支付的手续费1M钻</Option>
+                  <Option value="10">撤销推介扣除赚取的m钻</Option>
+                  <Option value="11">登上奖励榜前3名</Option>
+                  <Option value="12">M钻提现</Option>
+                  <Option value="13">M钻提现失败返还</Option>
+                  <Option value="14">撤销推介退还M钻</Option>
+                  <Option value="15">M钻兑换M币</Option>
+                  <Option value="16">撤销推介(欠费)</Option>
+                  <Option value="17">服务费结算</Option>
+                  <Option value="18">M钻购买商品</Option>
+                  <Option value="19">系统扣除M钻</Option>
                 </Select>
               )}
             </FormItem>
@@ -208,7 +241,7 @@ class TableList extends PureComponent {
         <Row gutter={{ md: 8, lg: 24, xl: 48 }}>
           <Col md={8} sm={24}>
             <FormItem label="类型">
-              {getFieldDecorator('status')(
+              {getFieldDecorator('type')(
                 <Select placeholder="请选择">
                   <Option value="1">收入</Option>
                   <Option value="2">消费</Option>
@@ -230,7 +263,7 @@ class TableList extends PureComponent {
             <Button style={{ marginLeft: 8 }} onClick={this.handleFormReset}>
               重置
             </Button>
-            <Button style={{ marginLeft: 8 }} onClick={this.handleFormReset}>
+            <Button style={{ marginLeft: 8 }} onClick={this.handleFormExcel}>
               导出excel
             </Button>
             <a style={{ marginLeft: 8 }} onClick={this.toggleForm}>
@@ -252,19 +285,31 @@ class TableList extends PureComponent {
       diamond: { data },
       loading,
     } = this.props;
-    console.log(data.pagination)
     const paginationProps = {
       showSizeChanger: true,
       showQuickJumper: true,
-      pageSize:data.pagination.page_size,
-      ...data.pagination,
+      pageSize: parseInt(data.pagination.page_size),
+      current: parseInt(data.pagination.current),
+      total: parseInt(data.pagination.total),
     };
-    console.log(paginationProps)
     return (
       <PageHeaderWrapper title="M钻流水">
         <Card bordered={false}>
           <div className={styles.tableList}>
             <div className={styles.tableListForm}>{this.renderForm()}</div>
+            <div className={styles.tableAlert}>
+              <Alert
+                message={
+                  <Fragment>
+                    累计{data.header.number}人进行{data.header.times}次操作,
+                    收入{data.header.income}钻,
+                    消费{data.header.consumption}钻。
+                  </Fragment>
+                }
+                type="info"
+                showIcon
+              />
+            </div>
             <Table
               loading={loading}
               rowKey="id"

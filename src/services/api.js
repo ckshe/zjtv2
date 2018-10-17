@@ -3,11 +3,11 @@ import request from '@/utils/request';
 import host from '@/utils/host';
 import { paramsForm } from '@/utils/paramsForm';
 
-function addMode (params){
+function addMode(params) {
   const mode = {
-    mode:'backstage'
+    mode: 'backstage'
   }
-  return {...params,...mode}
+  return { ...params, ...mode }
 }
 
 // TODO addMode(params)添加公共参数 POST需要转formData GET不用
@@ -31,6 +31,7 @@ export async function logoutLogin(params) {
 export async function rechargeList(params) {
   const data = addMode(params)
   if (data.export == 1) {
+    console.log(`${host()}/strikeBalance/list?${stringify(data)}`)
     window.location.href = `${host()}/recharge/list?${stringify(data)}`
   } else {
     return request(`${host()}/recharge/list?${stringify(data)}`);
@@ -66,17 +67,75 @@ export async function strikeBalanceAdd(params) {
     body: formData,
   });
 }
+// 冲账审核
+export async function strikeBalanceReview(params) {
+  const formData = paramsForm(addMode(params))
+  return request(`${host()}/strikeBalance/review`, {
+    method: 'POST',
+    body: formData,
+  });
+}
+// 账单核对列表
+export async function billCheckList(params) {
+  const formData = paramsForm(addMode(params))
+  return request(`${host()}/order/billCheckList`, {
+    method: 'POST',
+    body: formData,
+  });
+}
 // iOS账单核对
 export async function iOSList(params) {
-  return request(`/order/billAppStoreCheckList?${stringify(params)}`);
+  const formData = paramsForm(addMode(params))
+  return request(`${host()}/order/billAppStoreCheckList`, {
+    method: 'POST',
+    body: formData,
+  });
 }
 // 订单操作记录
-export async function orderRecord(params) {
-  return request(`/orderOperationLog/list?${stringify(params)}`);
+export async function OrderOperationLog(params) {
+  const data = addMode(params)
+  if (data.export == 1) {
+    window.location.href = `${host()}/orderOperationLog/list?${stringify(data)}`
+  } else {
+    return request(`${host()}/orderOperationLog/list?${stringify(data)}`);
+  }
 }
 // M钻流水
 export async function accountList(params) {
-  return request(`/score/diamondAccountList?${stringify(params)}`);
+  const data = addMode(params)
+  if (data.export == 1) {
+    window.location.href = `${host()}/score/diamondAccountList?${stringify(data)}`
+  } else {
+    return request(`${host()}/score/diamondAccountList?${stringify(data)}`);
+  }
+}
+// M钻消费
+export async function consumeList(params) {
+  const data = addMode(params)
+  if (data.export == 1) {
+    console.log(`${host()}/score/diamondConsumeByRecommend?${stringify(data)}`)
+    window.location.href = `${host()}/score/diamondConsumeByRecommend?${stringify(data)}`
+  } else {
+    return request(`${host()}/score/diamondConsumeByRecommend?${stringify(data)}`);
+  }
+}
+// 专家扣钻记录
+export async function deductList(params) {
+  const data = addMode(params)
+  if (data.export == 1) {
+    window.location.href = `${host()}/score/diamondDeductList?${stringify(data)}`
+  } else {
+    return request(`${host()}/score/diamondDeductList?${stringify(data)}`);
+  }
+}
+// 收益统计
+export async function incomeStatistics(params) {
+  const data = addMode(params)
+  if (data.export == 1) {
+    window.location.href = `${host()}/score/incomeStatistics?${stringify(data)}`
+  } else {
+    return request(`${host()}/score/incomeStatistics?${stringify(data)}`);
+  }
 }
 
 // 推介列表
@@ -86,44 +145,44 @@ export async function recommendList(params) {
 }
 // 推介详情
 export async function recommendDetails(params) {
-	const data = addMode(params)
-  return request(`${host()}/recommend/detail?${stringify(data)}`);
-}
-//更改推介内容
-export async function updateContent(params) {
-	console.log("updateContent",params)
-  const formData = paramsForm(addMode(params))
-  console.log("updateContent",formData)
-  return request(`${host()}/recommend/updateContent`, {
-    method: 'POST',
-    body: formData,
-  });
-}
-//撤销推介
-export async function setReason(params) {
-	console.log("setReason",params)
-  const formData = paramsForm(addMode(params))
-  console.log("setReason",formData)
-  return request(`${host()}/recommend/cancel`, {
-    method: 'POST',
-    body: formData,
-  });
-}
-// 撤销推介记录列表
-export async function cancelList(params) {
-  const data = addMode(params)
-  return request(`${host()}/recommend/cancelList?${stringify(data)}`);
-}
-//更新推送配置
-export async function updatePushConfig(params) {
-	console.log("updatePushConfig",params)
-  const formData = paramsForm(addMode(params))
-  console.log("updatePushConfig",formData)
-  return request(`${host()}/recommend/updatePushConfig`, {
-    method: 'POST',
-    body: formData,
-  });
-}
+   const data = addMode(params)
+   return request(`${host()}/recommend/detail?${stringify(data)}`);
+ }
+ //更改推介内容
+ export async function updateContent(params) {
+     console.log("updateContent",params)
+   const formData = paramsForm(addMode(params))
+   console.log("updateContent",formData)
+   return request(`${host()}/recommend/updateContent`, {
+     method: 'POST',
+     body: formData,
+   });
+ }
+ //撤销推介
+ export async function setReason(params) {
+     console.log("setReason",params)
+   const formData = paramsForm(addMode(params))
+   console.log("setReason",formData)
+   return request(`${host()}/recommend/cancel`, {
+     method: 'POST',
+     body: formData,
+   });
+ }
+ // 撤销推介记录列表
+ export async function cancelList(params) {
+   const data = addMode(params)
+   return request(`${host()}/recommend/cancelList?${stringify(data)}`);
+ }
+ //更新推送配置
+ export async function updatePushConfig(params) {
+     console.log("updatePushConfig",params)
+   const formData = paramsForm(addMode(params))
+   console.log("updatePushConfig",formData)
+   return request(`${host()}/recommend/updatePushConfig`, {
+     method: 'POST',
+     body: formData,
+   })
+ }
 // export async function removeFakeList(params) {
 //   const { count = 5, ...restParams } = params;
 //   return request(`/api/fake_list?count=${count}`, {

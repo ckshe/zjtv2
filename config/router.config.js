@@ -66,13 +66,6 @@ export default [
           },
           // 冲账审核
           {
-            path: '/recharge/review',
-            hideInMenu:true,
-            name: 'review',
-            component: './Recharge/Review',
-          },
-          // 账单核对列表
-          {
             path: '/recharge/bill-check/index',
             name: 'billcheck',
             component: './Recharge/BillCheck/index',
