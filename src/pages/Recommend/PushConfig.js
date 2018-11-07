@@ -15,8 +15,7 @@ const payment = ['微信', '支付宝APP', '支付宝手机网页', 'App Store',
   diamond,
   loading: loading.models.diamond,
 }))
-@Form.create()
-class TableList extends PureComponent {
+class PushConfig extends PureComponent {
   state = {
     expandForm: false,
     formValues: {},
@@ -277,4 +276,4 @@ class TableList extends PureComponent {
   }
 }
 
-export default TableList;
+export default PushConfig;
