@@ -4,10 +4,8 @@ export default {
   namespace: 'pushConfigModel',
 
   state: {
-    data: {
       list: [],
       pagination: {},
-    },
   },
 
   effects: {

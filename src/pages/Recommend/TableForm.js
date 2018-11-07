@@ -10,7 +10,6 @@ class TableForm extends PureComponent {
 
   constructor(props) {
     super(props);
-    console.log("外面传出的props========",props)
     this.state = {
       data: props.value,
       loading: false,
@@ -83,7 +82,7 @@ class TableForm extends PureComponent {
         return;
       }
       const target = this.getRowByKey(key) || {};
-      if (!target.workId || !target.name || !target.department) {
+      if (!target.content) {
         message.error('请填写完整成员信息。');
         e.target.focus();
         this.setState({
@@ -122,13 +121,13 @@ class TableForm extends PureComponent {
         title: '序号',
         dataIndex: 'id',
         key: 'id',
-        width: '10%'
+        width: '5%'
       },
       {
         title: '说明',
         dataIndex: 'description',
         key: 'description',
-        width: '20%',
+        width: '15%',
       },
       {
         title: '配置名',
@@ -154,6 +153,12 @@ class TableForm extends PureComponent {
           }
           return text;
         },
+      },
+      {
+        title: '更新时间',
+        dataIndex: 'update_time',
+        key: 'update_time',
+        width: '20%',
       },
       {
         title: '操作',
@@ -194,6 +199,7 @@ class TableForm extends PureComponent {
           columns={columns}
           dataSource={data}
           pagination={false}
+          rowKey={record=>record.id}
           rowClassName={record => (record.editable ? styles.editable : '')}
         />
       </Fragment>

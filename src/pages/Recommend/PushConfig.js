@@ -18,7 +18,6 @@ class PushConfig extends PureComponent {
   };
 
   componentDidMount() {
-    console.log(11111111111)
     const { dispatch } = this.props;
     dispatch({
       type: 'pushConfigModel/pushConfigList',
@@ -30,11 +29,11 @@ class PushConfig extends PureComponent {
       pushConfigModel: { data },
       loading,
     } = this.props;
-    console.log("render时的data====",data.data)
+    console.log("render====",data && data.data.list)
     return (
       <PageHeaderWrapper title="推介配置">
         <Card bordered={false}>
-          {/* <TableForm value={data.data.list} /> */}
+          <TableForm value={data && data.data.list} />
         </Card>
       </PageHeaderWrapper>
     );
