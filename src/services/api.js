@@ -173,6 +173,12 @@ export async function recommendDetails(params) {
    const data = addMode(params)
    return request(`${host()}/recommend/cancelList?${stringify(data)}`);
  }
+ //推送配置
+ export async function pushConfig(params) {
+  const data = addMode(params)
+  return request(`${host()}/recommend/pushConfig?${stringify(data)}`);
+}
+
  //更新推送配置
  export async function updatePushConfig(params) {
      console.log("updatePushConfig",params)
