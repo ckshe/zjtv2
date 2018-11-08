@@ -28,6 +28,13 @@ export default {
   'menu.recommend.cancellist': '推介撤销记录',
   'menu.recommend.pushconfig': '推介配置',
 
+  'menu.export': '专家管理',
+  'menu.export.exportList': '专家列表',
+  'menu.export.exportUpdate': '专家设置',
+  'menu.export.applicationList': '专家申请审核列表',
+  'menu.export.applicationDetail': '查看详情',
+  'menu.export.statisticsList': '专家统计',
+
   'menu.result': '结果页',
   'menu.result.success': '成功页',
   'menu.result.fail': '失败页',

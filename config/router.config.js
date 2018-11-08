@@ -154,6 +154,46 @@ export default [
           },
         ],
       },
+      // recommend 专家管理
+     {
+      path: '/export',
+      name: 'export',
+      icon: 'user',
+      routes: [
+        //专家列表
+        {
+          path: '/export/export-list',
+          name: 'exportList',
+          component: './Export/ExportList',
+        },
+        //  // 专家设置
+        {
+          path: '/export/export-list/export-update',
+          hideInMenu:true,
+          name: 'exportUpdate',
+          component: './Export/SetExport',
+        },
+        //专家申请审核列表
+        {
+          path: '/export/application-list',
+          name: 'applicationList',
+          component: './Export/ApplicationList',
+        },
+        // 专家审核查看详情
+       {
+         path: '/export/application-list/application-detail',
+         hideInMenu:true,
+         name: 'applicationDetail',
+         component: './Export/ApplicationDetail',
+       },
+       //专家统计
+        {
+          path: '/export/statistics-list',
+          name: 'statisticsList',
+          component: './Export/StatisticsList',
+        },
+      ],
+    },
       {
         name: 'result',
         icon: 'check-circle-o',
