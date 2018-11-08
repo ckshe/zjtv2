@@ -194,7 +194,7 @@ export async function updatePushConfig(params) {
 export async function uploadAvatar(params) {
   console.log("uploadAvatar", params)
   const formData = paramsForm(addMode(params))
-  return request(`${host()}/recommend/updatePushConfig`, {
+  return request(`${host()}/expert/uploadAvatar`, {
     method: 'POST',
     body: formData,
   })
@@ -202,33 +202,33 @@ export async function uploadAvatar(params) {
 //专家列表list GET
 export async function expertList(params) {
   const data = addMode(params)
-  return request(`${host()}/recommend/pushConfig?${stringify(data)}`);
+  return request(`${host()}/expert/list?${stringify(data)}`);
 }
 //专家审核详情 GET
 export async function applicationDetail(params) {
   const data = addMode(params)
-  return request(`${host()}/recommend/pushConfig?${stringify(data)}`);
+  return request(`${host()}/expert/applicationDetail?${stringify(data)}`);
 }
 //专家封号列表 GET
 export async function lockList(params) {
   const data = addMode(params)
-  return request(`${host()}/recommend/pushConfig?${stringify(data)}`);
+  return request(`${host()}/expert/lockList?${stringify(data)}`);
 }
 //专家申请列表 GET
 export async function applicationList(params) {
   const data = addMode(params)
-  return request(`${host()}/recommend/pushConfig?${stringify(data)}`);
+  return request(`${host()}/expert/applicationList?${stringify(data)}`);
 }
 //专家统计列表 GET
 export async function statisticsList(params) {
   const data = addMode(params)
-  return request(`${host()}/recommend/pushConfig?${stringify(data)}`);
+  return request(`${host()}/expert/statisticsList?${stringify(data)}`);
 }
 //专家设置 POST
 export async function expertUpdate(params) {
   console.log("expertUpdate", params)
   const formData = paramsForm(addMode(params))
-  return request(`${host()}/recommend/updatePushConfig`, {
+  return request(`${host()}/expert/update`, {
     method: 'POST',
     body: formData,
   })
@@ -237,7 +237,7 @@ export async function expertUpdate(params) {
 export async function updateState(params) {
   console.log("updateState", params)
   const formData = paramsForm(addMode(params))
-  return request(`${host()}/recommend/updatePushConfig`, {
+  return request(`${host()}/expert/updateState`, {
     method: 'POST',
     body: formData,
   })
@@ -246,7 +246,7 @@ export async function updateState(params) {
 export async function expertAdd(params) {
   console.log("expertAdd", params)
   const formData = paramsForm(addMode(params))
-  return request(`${host()}/recommend/updatePushConfig`, {
+  return request(`${host()}/expert/add`, {
     method: 'POST',
     body: formData,
   })
@@ -255,7 +255,7 @@ export async function expertAdd(params) {
 export async function updateLockStatus(params) {
   console.log("expertAdd", params)
   const formData = paramsForm(addMode(params))
-  return request(`${host()}/recommend/updatePushConfig`, {
+  return request(`${host()}/expert/updateLockStatus`, {
     method: 'POST',
     body: formData,
   })

@@ -1,4 +1,4 @@
-import { recommendList,updateContent } from '@/services/api';
+import { expertList } from '@/services/api';
 function consumeListForm(params) {
   var buffer = { page_size: 10, page: 1 };
   typeof (params.page_size) != 'undefined' ? buffer.page_size = params.page_size : '';
@@ -34,11 +34,11 @@ export default {
   },
 
   effects: {
-    *getRelist({ payload }, { call, put }) {
-   	console.log("payload",payload)
+    *getExportlist({ payload }, { call, put }) {
+   	console.log("payload====",payload)
    		const buffer = consumeListForm(payload)
-      const response = yield call(recommendList, buffer);
-      console.log(response)
+      const response = yield call(expertList, buffer);
+      console.log("response=========",response)
       yield put({
         type: 'save',
         payload: response.data,
