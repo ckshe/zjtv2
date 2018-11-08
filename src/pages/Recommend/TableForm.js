@@ -19,6 +19,8 @@ class TableForm extends PureComponent {
   }
 
   static getDerivedStateFromProps(nextProps, preState) {
+    // console.log("nextProps===",nextProps)
+    // console.log("preState===",preState)
     if (isEqual(nextProps.value, preState.value)) {
       return null;
     }
@@ -30,12 +32,14 @@ class TableForm extends PureComponent {
 
   getRowByKey(key, newData) {
     const { data } = this.state;
-    return (newData || data).filter(item => item.key === key)[0];
+    return (newData || data).filter(item => item.id === key)[0];
   }
 
   toggleEditable = (e, key) => {
+    // console.log("record.key====",key)
     e.preventDefault();
     const { data } = this.state;
+    // console.log("datay====",data)
     const newData = data.map(item => ({ ...item }));
     const target = this.getRowByKey(key, newData);
     if (target) {
@@ -47,20 +51,14 @@ class TableForm extends PureComponent {
       this.setState({ data: newData });
     }
   };
-  remove(key) {
-    const { data } = this.state;
-    const { onChange } = this.props;
-    const newData = data.filter(item => item.key !== key);
-    this.setState({ data: newData });
-    onChange(newData);
-  }
-
+  
+  
   handleKeyPress(e, key) {
     if (e.key === 'Enter') {
       this.saveRow(e, key);
     }
   }
-
+  
   handleFieldChange(e, fieldName, key) {
     const { data } = this.state;
     const newData = data.map(item => ({ ...item }));
@@ -70,7 +68,7 @@ class TableForm extends PureComponent {
       this.setState({ data: newData });
     }
   }
-
+  
   saveRow(e, key) {
     e.persist();
     this.setState({
@@ -91,9 +89,11 @@ class TableForm extends PureComponent {
         return;
       }
       this.toggleEditable(e, key);
-      const { data } = this.state;
+      // const { data } = this.state;
+      const saveData = this.getRowByKey(key);
+      console.log("this.state====",saveData)
       const { onChange } = this.props;
-      onChange(data);
+      onChange(saveData);
       this.setState({
         loading: false,
       });
@@ -145,8 +145,8 @@ class TableForm extends PureComponent {
             return (
               <Input
                 value={text}
-                onChange={e => this.handleFieldChange(e, 'content', record.key)}
-                onKeyPress={e => this.handleKeyPress(e, record.key)}
+                onChange={e => this.handleFieldChange(e, 'content', record.id)}
+                onKeyPress={e => this.handleKeyPress(e, record.id)}
                 placeholder="配置内容"
               />
             );
@@ -164,6 +164,7 @@ class TableForm extends PureComponent {
         title: '操作',
         key: 'action',
         render: (text, record) => {
+          // console.log("record===",record)
           const { loading } = this.state;
           if (!!record.editable && loading) {
             return null;
@@ -171,19 +172,15 @@ class TableForm extends PureComponent {
           if (record.editable) {
             return (
               <span>
-                <a onClick={e => this.saveRow(e, record.key)}>保存</a>
+                <a onClick={e => this.saveRow(e, record.id)}>保存</a>
                 <Divider type="vertical" />
-                <a onClick={e => this.cancel(e, record.key)}>取消</a>
+                <a onClick={e => this.cancel(e, record.id)}>取消</a>
               </span>
             );
           }
           return (
             <span>
-              <a onClick={e => this.toggleEditable(e, record.key)}>编辑</a>
-              <Divider type="vertical" />
-              <Popconfirm title="是否要删除此行？" onConfirm={() => this.remove(record.key)}>
-                <a>删除</a>
-              </Popconfirm>
+              <a onClick={e => this.toggleEditable(e, record.id)}>编辑</a>
             </span>
           );
         },
@@ -191,7 +188,7 @@ class TableForm extends PureComponent {
     ];
 
     const { loading, data } = this.state;
-    console.log("this.state=========",data)
+    // console.log("this.state=========",data)
     return (
       <Fragment>
         <Table

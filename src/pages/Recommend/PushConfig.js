@@ -3,9 +3,7 @@ import { connect } from 'dva';
 import { Card, Form, } from 'antd';
 import PageHeaderWrapper from '@/components/PageHeaderWrapper';
 import TableForm from './TableForm';
-import styles from './style.less';
-
-const FormItem = Form.Item;
+import isEqual from 'lodash/isEqual';
 
 @Form.create()
 @connect(({ pushConfigModel, loading }) => ({
@@ -24,6 +22,14 @@ class PushConfig extends PureComponent {
     });
   }
 
+  onChange = (saveData) =>{
+    console.log(saveData);
+    const { dispatch } = this.props;
+    dispatch({
+      type: 'pushConfigModel/updatePushConfig',
+      payload: saveData,
+    });
+  }
   render() {
     const {
       pushConfigModel: { data },
@@ -33,7 +39,7 @@ class PushConfig extends PureComponent {
     return (
       <PageHeaderWrapper title="推介配置">
         <Card bordered={false}>
-          <TableForm value={data && data.data.list} />
+          <TableForm value={data && data.data.list} onChange = {this.onChange} />
         </Card>
       </PageHeaderWrapper>
     );

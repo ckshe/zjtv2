@@ -19,10 +19,14 @@ export default {
     },
     *updatePushConfig({ payload }, { call, put }) {
       const response = yield call(updatePushConfig, payload);
-      yield put({
-        type: 'save',
-        payload: response,
-      });
+      if(response.status == 200){
+        const resData = yield call(pushConfig);
+        console.log("resData===",resData)
+        yield put({
+          type: 'save',
+          payload: resData,
+        });
+      }
     },
   },
 
