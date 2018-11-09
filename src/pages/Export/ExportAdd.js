@@ -27,7 +27,7 @@ const fieldLabels = {
 /* eslint react/no-multi-comp:0 */
 @connect(({ exportlist, loading }) => ({
   exportlist,
-  loading: loading.models.exportlist,
+  loading: loading.effects['exportlist/submitExportAdd']
 }))
 @Form.create()
 class ExportAdd extends PureComponent {
@@ -35,13 +35,19 @@ class ExportAdd extends PureComponent {
   };
 
   componentDidMount() {
-    // const { dispatch } = this.props;
-    // dispatch({
-    //   type: 'exportlist/getExportlist',
-    //   payload: {},
-    // });
   }
-
+  handleSubmit = e => {
+    const { dispatch, form } = this.props;
+    e.preventDefault();
+    form.validateFieldsAndScroll((err, values) => {
+      if (!err) {
+        dispatch({
+          type: 'exportlist/submitExportAdd',
+          payload: values,
+        });
+      }
+    });
+  };
   render() {
     const {
       loading,
@@ -52,7 +58,7 @@ class ExportAdd extends PureComponent {
       <Fragment>
         <PageHeaderWrapper title="添加专家">
           <Card bordered={false}>
-            <Form layout="vertical" hideRequiredMark>
+            <Form layout="vertical" hideRequiredMark onSubmit={this.handleSubmit}>
               <Row>
                 <Col span={3}>
                   <Form.Item label={fieldLabels.avatar}>
@@ -154,8 +160,9 @@ class ExportAdd extends PureComponent {
                   </Form.Item>
                 </Col>
               </Row>
-              <Button type="primary" htmlType="submit" loading={submitting}>
-                <FormattedMessage id="form.submit" />
+              <Button type="primary" htmlType="submit" loading={loading}>
+                {/* <FormattedMessage id="form.submit" /> */}
+                保存
               </Button>
             </Form>
           </Card>
