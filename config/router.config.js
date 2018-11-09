@@ -31,10 +31,10 @@ export default [
           // 查看详情
           {
             path: '/recharge/record/order-details',
-            hideInMenu:true,
+            hideInMenu: true,
             name: 'orderdetails',
             component: './Recharge/OrderDetails/index',
-            routes:[
+            routes: [
               {
                 path: '/recharge/record/order-details',
                 redirect: '/recharge/record/order-details/details',
@@ -60,7 +60,7 @@ export default [
           // 冲账充值
           {
             path: '/recharge/strike-balance/recharge-from',
-            hideInMenu:true,
+            hideInMenu: true,
             name: 'rechargeform',
             component: './Recharge/RechargeForm',
           },
@@ -69,7 +69,7 @@ export default [
             path: '/recharge/bill-check/index',
             name: 'billcheck',
             component: './Recharge/BillCheck/index',
-            routes:[
+            routes: [
               {
                 path: '/recharge/bill-check/index',
                 redirect: '/recharge/bill-check/index/details-list',
@@ -125,7 +125,7 @@ export default [
         ],
       },
       // recommend 推介管理
-     {
+      {
         path: '/recommend',
         name: 'recommend',
         icon: 'deployment-unit',
@@ -135,10 +135,10 @@ export default [
             name: 'recommendlist',
             component: './Recommend/RecomList',
           },
-           // 查看详情
+          // 查看详情
           {
             path: '/recommend/recommend-list/list-details',
-            hideInMenu:true,
+            hideInMenu: true,
             name: 'recommenddetails',
             component: './Recommend/Details',
           },
@@ -155,50 +155,57 @@ export default [
         ],
       },
       // recommend 专家管理
-     {
-      path: '/export',
-      name: 'export',
-      icon: 'user',
-      routes: [
-        //专家列表
-        {
-          path: '/export/export-list',
-          name: 'exportList',
-          component: './Export/ExportList',
-        },
-        //  // 专家设置
-        {
-          path: '/export/export-list/export-update',
-          hideInMenu:true,
-          name: 'exportUpdate',
-          component: './Export/SetExport',
-        },
-        //专家申请审核列表
-        {
-          path: '/export/application-list',
-          name: 'applicationList',
-          component: './Export/ApplicationList',
-        },
-        // 专家审核查看详情
-       {
-         path: '/export/application-list/application-detail',
-         hideInMenu:true,
-         name: 'applicationDetail',
-         component: './Export/ApplicationDetail',
-       },
-       //专家统计
-        {
-          path: '/export/statistics-list',
-          name: 'statisticsList',
-          component: './Export/StatisticsList',
-        },
-      ],
-    },
+      {
+        path: '/export',
+        name: 'export',
+        icon: 'user',
+        routes: [
+          //专家列表
+          {
+            path: '/export/export-list',
+            name: 'exportList',
+            component: './Export/ExportList',
+          },
+          // 专家设置
+          {
+            path: '/export/export-list/export-update',
+            hideInMenu: true,
+            name: 'exportUpdate',
+            component: './Export/SetExport',
+          },
+          // 添加专家
+          {
+            path: '/export/export-list/export-add',
+            hideInMenu: true,
+            name: 'exportAdd',
+            component: './Export/ExportAdd',
+          },
+          //专家申请审核列表
+          {
+            path: '/export/application-list',
+            name: 'applicationList',
+            component: './Export/ApplicationList',
+          },
+          // 专家审核查看详情
+          {
+            path: '/export/application-list/application-detail',
+            hideInMenu: true,
+            name: 'applicationDetail',
+            component: './Export/ApplicationDetail',
+          },
+          //专家统计
+          {
+            path: '/export/statistics-list',
+            name: 'statisticsList',
+            component: './Export/StatisticsList',
+          },
+        ],
+      },
       {
         name: 'result',
         icon: 'check-circle-o',
         path: '/result',
-        hideInMenu:true,
+        hideInMenu: true,
         routes: [
           // result
           {
@@ -213,7 +220,7 @@ export default [
         name: 'exception',
         icon: 'warning',
         path: '/exception',
-        hideInMenu:true,
+        hideInMenu: true,
         routes: [
           // exception
           {

@@ -31,6 +31,7 @@ export default {
   'menu.export': '专家管理',
   'menu.export.exportList': '专家列表',
   'menu.export.exportUpdate': '专家设置',
+  'menu.export.exportAdd': '添加专家',
   'menu.export.applicationList': '专家申请审核列表',
   'menu.export.applicationDetail': '查看详情',
   'menu.export.statisticsList': '专家统计',

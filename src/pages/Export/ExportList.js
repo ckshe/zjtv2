@@ -8,6 +8,7 @@ import styles from './style.less';
 import { recommendType, status, level, sort } from '@/pages/config'
 
 const FormItem = Form.Item;
+const sourceArr = ['','7m内部专家','sportsDt']
 @Form.create()
 /* eslint react/no-multi-comp:0 */
 @connect(({ exportlist, loading }) => ({
@@ -103,16 +104,20 @@ class ExportList extends PureComponent {
     });
   }
   //跳转页面
-  gotoRecommondDetails(id) {
+  gotoExpertAdd(id) {
     router.push({
-      pathname: '/recommend/recommend-list/list-details',
+      pathname: '/export/export-list/export-add',
+    })
+  }
+  //跳转专家详情
+  gotoSetExport(id) {
+    router.push({
+      pathname: '/export/export-list/export-update',
       query: {
         id,
       }
     })
   }
-
-
 
   handleOk = (e) => {
     e.preventDefault();
@@ -167,6 +172,11 @@ class ExportList extends PureComponent {
       align: 'center',
       dataIndex: 'source',
       key: 'source',
+      render: (_, record) => (
+        <Fragment>
+          <div>{sourceArr[record.source]}</div>
+        </Fragment>
+      ),
     },
     {
       title: '身份认证',
@@ -195,7 +205,7 @@ class ExportList extends PureComponent {
       align: 'center',
       render: (_, record) => (
         <Fragment>
-          <div><a onClick={() => this.gotoRecommondDetails(record.id)}>专家设置</a></div>
+          <div><a onClick={() => this.gotoSetExport(record.id)}>专家设置</a></div>
         </Fragment>
       )
     },
@@ -227,7 +237,7 @@ class ExportList extends PureComponent {
               <Button style={{ marginLeft: 8 }} onClick={this.handleFormReset}>
                 重置
               </Button>
-              <Button style={{ marginLeft: 8, color: '#1890FF', borderColor: '#1890FF' }} onClick={this.handleFormReset}>
+              <Button style={{ marginLeft: 8, color: '#1890FF', borderColor: '#1890FF' }} onClick={this.gotoExpertAdd}>
                 添加专家
               </Button>
             </span>
