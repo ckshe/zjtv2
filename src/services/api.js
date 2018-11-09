@@ -145,57 +145,130 @@ export async function recommendList(params) {
 }
 // 推介详情
 export async function recommendDetails(params) {
-   const data = addMode(params)
-   return request(`${host()}/recommend/detail?${stringify(data)}`);
- }
- //更改推介内容
- export async function updateContent(params) {
-     console.log("updateContent",params)
-   const formData = paramsForm(addMode(params))
-   console.log("updateContent",formData)
-   return request(`${host()}/recommend/updateContent`, {
-     method: 'POST',
-     body: formData,
-   });
- }
- //撤销推介
- export async function setReason(params) {
-     console.log("setReason",params)
-   const formData = paramsForm(addMode(params))
-   console.log("setReason",formData)
-   return request(`${host()}/recommend/cancel`, {
-     method: 'POST',
-     body: formData,
-   });
- }
- // 撤销推介记录列表
- export async function cancelList(params) {
-   const data = addMode(params)
-   return request(`${host()}/recommend/cancelList?${stringify(data)}`);
- }
- //推送配置
- export async function pushConfig(params) {
+  const data = addMode(params)
+  return request(`${host()}/recommend/detail?${stringify(data)}`);
+}
+//更改推介内容
+export async function updateContent(params) {
+  console.log("updateContent", params)
+  const formData = paramsForm(addMode(params))
+  console.log("updateContent", formData)
+  return request(`${host()}/recommend/updateContent`, {
+    method: 'POST',
+    body: formData,
+  });
+}
+//撤销推介
+export async function setReason(params) {
+  console.log("setReason", params)
+  const formData = paramsForm(addMode(params))
+  console.log("setReason", formData)
+  return request(`${host()}/recommend/cancel`, {
+    method: 'POST',
+    body: formData,
+  });
+}
+// 撤销推介记录列表
+export async function cancelList(params) {
+  const data = addMode(params)
+  return request(`${host()}/recommend/cancelList?${stringify(data)}`);
+}
+//推送配置
+export async function pushConfig(params) {
   const data = addMode(params)
   return request(`${host()}/recommend/pushConfig?${stringify(data)}`);
 }
 
- //更新推送配置
- export async function updatePushConfig(params) {
-     console.log("updatePushConfig",params)
-   const formData = paramsForm(addMode(params))
-   console.log("updatePushConfig",formData)
-   return request(`${host()}/recommend/updatePushConfig`, {
-     method: 'POST',
-     body: formData,
-   })
- }
+//更新推送配置
+export async function updatePushConfig(params) {
+  console.log("updatePushConfig", params)
+  const formData = paramsForm(addMode(params))
+  console.log("updatePushConfig", formData)
+  return request(`${host()}/recommend/updatePushConfig`, {
+    method: 'POST',
+    body: formData,
+  })
+}
+/*=========专家管理============*/
+//上传头像 POST
+export async function uploadAvatar(params) {
+  console.log("uploadAvatar", params)
+  const formData = paramsForm(addMode(params))
+  return request(`${host()}/expert/uploadAvatar`, {
+    method: 'POST',
+    body: formData,
+  })
+}
+//专家列表list GET
+export async function expertList(params) {
+  const data = addMode(params)
+  return request(`${host()}/expert/list?${stringify(data)}`);
+}
+//专家审核详情 GET
+export async function applicationDetail(params) {
+  const data = addMode(params)
+  return request(`${host()}/expert/applicationDetail?${stringify(data)}`);
+}
+//专家封号列表 GET
+export async function lockList(params) {
+  const data = addMode(params)
+  return request(`${host()}/expert/lockList?${stringify(data)}`);
+}
+//专家申请列表 GET
+export async function applicationList(params) {
+  const data = addMode(params)
+  return request(`${host()}/expert/applicationList?${stringify(data)}`);
+}
+//专家统计列表 GET
+export async function statisticsList(params) {
+  const data = addMode(params)
+  return request(`${host()}/expert/statisticsList?${stringify(data)}`);
+}
+//专家设置 POST
+export async function expertUpdate(params) {
+  console.log("expertUpdate", params)
+  const formData = paramsForm(addMode(params))
+  return request(`${host()}/expert/update`, {
+    method: 'POST',
+    body: formData,
+  })
+}
+//审核 POST
+export async function updateState(params) {
+  console.log("updateState", params)
+  const formData = paramsForm(addMode(params))
+  return request(`${host()}/expert/updateState`, {
+    method: 'POST',
+    body: formData,
+  })
+}
+//添加专家 POST
+export async function expertAdd(params) {
+  console.log("expertAdd", params)
+  const formData = paramsForm(addMode(params))
+  return request(`${host()}/expert/add`, {
+    method: 'POST',
+    body: formData,
+  })
+}
+//解封和封号 POST
+export async function updateLockStatus(params) {
+  console.log("expertAdd", params)
+  const formData = paramsForm(addMode(params))
+  return request(`${host()}/expert/updateLockStatus`, {
+    method: 'POST',
+    body: formData,
+  })
+}
+
+
 // export async function removeFakeList(params) {
-//   const { count = 5, ...restParams } = params;
-//   return request(`/api/fake_list?count=${count}`, {
-//     method: 'POST',
-//     body: {
-//       ...restParams,
-//       method: 'delete',
+  //   const { count = 5, ...restParams } = params;
+  //   return request(`/api/fake_list?count=${count}`, {
+    //     method: 'POST',
+    //     body: {
+      //       ...restParams,
+      //       method: 'delete',
 //     },
 //   });
 // }
