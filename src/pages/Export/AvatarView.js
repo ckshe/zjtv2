@@ -38,10 +38,13 @@ class Avatar extends React.Component {
                 imageUrl,
                 loading: false,
             }));
+            const { onChange } = this.props;
+            const avatarpic = info.file.response.data.avatar;
+            onChange(avatarpic);
         }
     }
    postPic = ()=>{
-       return `${host()}/expert/uploadAvatar?mode=backstage`
+       return `${host()}/expert/uploadAvatar`
    }
     render() {
         const uploadButton = (
@@ -61,6 +64,7 @@ class Avatar extends React.Component {
                 beforeUpload={beforeUpload}
                 onChange={this.handleChange}
                 withCredentials={true}
+                data={{mode:"backstage"}}
             >
                 {imageUrl ? <img style={{width:"100px",height:"100px"}} src={imageUrl} alt="avatar" /> : uploadButton}
             </Upload>

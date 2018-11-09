@@ -48,6 +48,10 @@ class ExportAdd extends PureComponent {
       }
     });
   };
+  onAvatarPic = (avatarpic) =>{
+    console.log("avatarpic======",avatarpic)
+    return avatarpic;
+  }
   render() {
     const {
       loading,
@@ -62,7 +66,7 @@ class ExportAdd extends PureComponent {
               <Row>
                 <Col span={3}>
                   <Form.Item label={fieldLabels.avatar}>
-                    {getFieldDecorator('avatar')(<Avatar></Avatar>)}
+                    {getFieldDecorator('avatar',{getValueFromEvent:this.onAvatarPic})(<Avatar onChange = {this.onAvatarPic} />)}
                   </Form.Item>
                 </Col>
                 <Col span={21}>
@@ -151,6 +155,11 @@ class ExportAdd extends PureComponent {
                       rules: [{ required: true, message: '请输入手机号' }],
                     })(<Input placeholder="请输入手机号" />)}
                   </Form.Item>
+                  <Form.Item label={fieldLabels.telephone}>
+                    {getFieldDecorator('area_code', {
+                      rules: [{ required: true, message: '区号' }],
+                    })(<Input placeholder="请输入手机号" value="086" />)}
+                  </Form.Item>
                 </Col>
                 <Col span={8}>
                   <Form.Item label={fieldLabels.wechat}>
@@ -160,6 +169,7 @@ class ExportAdd extends PureComponent {
                   </Form.Item>
                 </Col>
               </Row>
+              
               <Button type="primary" htmlType="submit" loading={loading}>
                 {/* <FormattedMessage id="form.submit" /> */}
                 保存
