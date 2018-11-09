@@ -1,4 +1,4 @@
-import { expertList } from '@/services/api';
+import { expertList,expertAdd} from '@/services/api';
 function consumeListForm(params) {
   var buffer = { page_size: 10, page: 1 };
   typeof (params.page_size) != 'undefined' ? buffer.page_size = params.page_size : '';
@@ -25,51 +25,41 @@ export default {
       list: [],
       header: {},
       pagination: {
-      	page_size:10,
-      	current:1,
-      	total:0
+        page_size: 10,
+        current: 1,
+        total: 0
       },
     },
-    review:''
   },
 
   effects: {
     *getExportlist({ payload }, { call, put }) {
-   	console.log("payload====",payload)
-   		const buffer = consumeListForm(payload)
+      console.log("payload====", payload)
+      const buffer = consumeListForm(payload)
       const response = yield call(expertList, buffer);
-      console.log("response=========",response)
+      console.log("response=========", response)
       yield put({
         type: 'save',
         payload: response.data,
       });
     },
-    *updateContent({ payload }, { call, put }) {
-   	console.log("payload",payload)
-      const response = yield call(updateContent, payload);
+    *submitExportAdd({ payload }, { call, put }) {
+      console.log("expertAdd===========", payload)
+      const response = yield call(expertAdd, payload);
       console.log(response)
       yield put({
         type: 'save',
-        payload: 'review',
+        payload: response.data,
       });
     },
   },
 
   reducers: {
     save(state, action) {
-    	if(action.payload=="review"){
-    		return {
-    		  ...state,
-    		  review: action.payload,
-    		};
-    	}else{
-    		return {
-    		  ...state,
-    		  data: action.payload,
-    		  review:''
-    		};
-    		
-    	}
+        return {
+          ...state,
+          data: action.payload
+        };
     },
   },
 };
