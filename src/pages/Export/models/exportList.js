@@ -1,4 +1,6 @@
-import { expertList,expertAdd} from '@/services/api';
+import { expertList, expertAdd, nameOrNickIsExist } from '@/services/api';
+import router from 'umi/router';
+import { message } from 'antd';
 function consumeListForm(params) {
   var buffer = { page_size: 10, page: 1 };
   typeof (params.page_size) != 'undefined' ? buffer.page_size = params.page_size : '';
@@ -30,6 +32,7 @@ export default {
         total: 0
       },
     },
+    isExist: {}
   },
 
   effects: {
@@ -47,19 +50,46 @@ export default {
       console.log("expertAdd===========", payload)
       const response = yield call(expertAdd, payload);
       console.log(response)
+      if (response.status == "200") {
+        message.success("添加专家成功", 1, () => {
+          router.push({
+            pathname: "/export/export-list"
+          })
+        })
+      } else {
+        message.error("添加专家失败", 2, () => {
+        })
+      }
+    },
+    *nameOrNickIsExist({ payload }, { call, put }) {
+      console.log("nameOrNickIsExist===========", payload)
+      const response = yield call(nameOrNickIsExist, payload);
+      console.log(response)
+      const data = {
+        nameOrNickIsExist: false
+      }
+      if (response.status == "200") {
+        data.nameOrNickIsExist = true
+      }
       yield put({
-        type: 'save',
-        payload: response.data,
+        type: 'isExist',
+        payload: data.nameOrNickIsExist,
       });
     },
   },
 
   reducers: {
     save(state, action) {
-        return {
-          ...state,
-          data: action.payload
-        };
+      return {
+        ...state,
+        data: action.payload
+      };
     },
+    isExist(state, action) {
+      return {
+        ...state,
+        nameOrNickIsExist: action.payload
+      }
+    }
   },
 };

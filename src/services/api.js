@@ -233,6 +233,13 @@ export async function expertUpdate(params) {
     body: formData,
   })
 }
+//通过专家id获取专家列表 get
+export async function getExpertDtail(params) {
+  const data = addMode(params)
+  return request(`${host()}/expert/detail?${stringify(data)}`);
+}
+
+
 //审核 POST
 export async function updateState(params) {
   console.log("updateState", params)
@@ -247,6 +254,15 @@ export async function expertAdd(params) {
   console.log("expertAdd", params)
   const formData = paramsForm(addMode(params))
   return request(`${host()}/expert/add`, {
+    method: 'POST',
+    body: formData,
+  })
+}
+//判断这两个用户名或昵称是否被占用
+export async function nameOrNickIsExist(params) {
+  console.log("expertAdd", params)
+  const formData = paramsForm(addMode(params))
+  return request(`${host()}/expert/isExist`, {
     method: 'POST',
     body: formData,
   })

@@ -9,11 +9,11 @@ function getBase64(img, callback) {
 function beforeUpload(file) {
     const isJPG = file.type === 'image/jpeg';
     if (!isJPG) {
-        message.error('You can only upload JPG file!');
+        message.error('只支持JPG、GIF、PNG的图片格式');
     }
     const isLt2M = file.size / 1024 / 1024 < 2;
     if (!isLt2M) {
-        message.error('Image must smaller than 2MB!');
+        message.error('图片大小必须小于2M');
     }
     return isJPG && isLt2M;
 }
@@ -38,14 +38,17 @@ class Avatar extends React.Component {
                 imageUrl,
                 loading: false,
             }));
+            const { onChange } = this.props;
+            const avatarpic = info.file.response.data.avatar;
+            onChange(avatarpic);
         }
     }
    postPic = ()=>{
-       return `${host()}/expert/uploadAvatar?mode=backstage`
+       return `${host()}/expert/uploadAvatar`
    }
     render() {
         const uploadButton = (
-            <div style={{width:"100px",height:"100px"}}>
+            <div style={{width:"100px",height:"100px",display: "initial"}}>
                 <Icon type={this.state.loading ? 'loading' : 'plus'} />
                 <div className="ant-upload-text">上传</div>
             </div>
@@ -61,6 +64,7 @@ class Avatar extends React.Component {
                 beforeUpload={beforeUpload}
                 onChange={this.handleChange}
                 withCredentials={true}
+                data={{mode:"backstage"}}
             >
                 {imageUrl ? <img style={{width:"100px",height:"100px"}} src={imageUrl} alt="avatar" /> : uploadButton}
             </Upload>
