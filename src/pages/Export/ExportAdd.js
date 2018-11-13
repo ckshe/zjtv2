@@ -133,7 +133,7 @@ class ExportAdd extends PureComponent {
                       {getFieldDecorator('source', {
                         rules: [{ required: true, message: '来源未填写' }],
                       })(
-                        <Select placeholder="请选择管理员">
+                        <Select placeholder="请选择来源">
                           <Option value="1">7m内部专家</Option>
                           <Option value="2">sportsDt</Option>
                         </Select>
