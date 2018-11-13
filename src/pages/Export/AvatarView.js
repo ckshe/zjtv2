@@ -23,37 +23,45 @@ class Avatar extends React.Component {
         super(props)
         this.state = {
             loading: false,
+            imageUrl: '',
+            isPropsAvatar:true
         };
     }
     handleChange = (info) => {
-        console.log("info====",info)
+        console.log("info====", info)
         if (info.file.status === 'uploading') {
-            this.setState({ loading: true });
+            this.setState({
+                loading: true,
+                imageUrl: '',
+            });
             return;
         }
-        console.log("info====",info)
         if (info.file.status === 'done') {
-            // Get this url from response in real world.
             getBase64(info.file.originFileObj, imageUrl => this.setState({
                 imageUrl,
                 loading: false,
+                isPropsAvatar:false,
             }));
             const { onChange } = this.props;
             const avatarpic = info.file.response.data.avatar;
             onChange(avatarpic);
         }
     }
-   postPic = ()=>{
-       return `${host()}/expert/uploadAvatar`
-   }
+    postPic = () => {
+        return `${host()}/expert/uploadAvatar`
+    }
     render() {
         const uploadButton = (
-            <div style={{width:"100px",height:"100px",display: "initial"}}>
+            <div style={{ width: "100px", height: "100px", display: "initial" }}>
                 <Icon type={this.state.loading ? 'loading' : 'plus'} />
                 <div className="ant-upload-text">上传</div>
             </div>
         );
-        const imageUrl = this.state.imageUrl;
+        if(this.state.isPropsAvatar){
+            var imageUrl = this.props.avatar ? this.props.avatar : this.state.imageUrl;
+        }else{
+            var imageUrl =  this.state.imageUrl;
+        }
         return (
             <Upload
                 name="avatar"
@@ -64,9 +72,9 @@ class Avatar extends React.Component {
                 beforeUpload={beforeUpload}
                 onChange={this.handleChange}
                 withCredentials={true}
-                data={{mode:"backstage"}}
+                data={{ mode: "backstage" }}
             >
-                {imageUrl ? <img style={{width:"100px",height:"100px"}} src={imageUrl} alt="avatar" /> : uploadButton}
+                {imageUrl ? <img style={{ width: "100px", height: "100px" }} src={imageUrl} alt="avatar" /> : uploadButton}
             </Upload>
         );
     }
