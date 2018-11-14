@@ -185,14 +185,31 @@ export default [
             path: '/export/application-list',
             name: 'applicationList',
             component: './Export/ApplicationList',
+            routes:[
+              {
+                path:'/export/application-list',
+                hideInMenu: true,
+                redirect: '/export/application-list/export-application-list',
+              },
+              {
+                path:'/export/application-list/export-application-list',
+                hideInMenu: true,
+                component:'./Export/ExportApplicationList',
+              },
+              {
+                path:'/export/application-list/lock-list',
+                hideInMenu: true,
+                component:'./Export/Locklist',
+              },
+              {
+                path: '/export/application-list/application-detail',
+                hideInMenu: true,
+                component: './Export/ApplicationDetail',
+              },
+            ]
           },
           // 专家审核查看详情
-          {
-            path: '/export/application-list/application-detail',
-            hideInMenu: true,
-            name: 'applicationDetail',
-            component: './Export/ApplicationDetail',
-          },
+          
           //专家统计
           {
             path: '/export/statistics-list',
