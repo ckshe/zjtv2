@@ -8,7 +8,7 @@ import styles from './style.less';
 import { recommendType, status, level, sort } from '@/pages/config'
 
 const FormItem = Form.Item;
-const sourceArr = ['','7m内部专家','sportsDt']
+const sourceArr = ['','7m内部专家','b端SportsDT']
 @Form.create()
 /* eslint react/no-multi-comp:0 */
 @connect(({ exportlist, loading }) => ({

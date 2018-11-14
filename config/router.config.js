@@ -200,15 +200,15 @@ export default [
                 name:'locklist',
                 component:'./Export/Locklist',
               },
-              {
-                path: '/export/application/application-detail',
-                hideInMenu: true,
-                component: './Export/ApplicationDetail',
-              },
             ]
           },
           // 专家审核查看详情
-          
+          {
+            path: '/export/detail',
+            hideInMenu: true,
+            name:'detail',
+            component: './Export/ApplicationDetail',
+          },
           //专家统计
           {
             path: '/export/statistics-list',

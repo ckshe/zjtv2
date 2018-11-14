@@ -35,7 +35,7 @@ export default {
   'menu.export.application': '专家申请审核列表',
   'menu.export.application.exportlist': '申请列表',
   'menu.export.application.locklist': '封号',
-  'menu.export.applicationDetail': '查看详情',
+  'menu.export.detail': '查看详情',
   'menu.export.statisticsList': '专家统计',
 
   'menu.result': '结果页',

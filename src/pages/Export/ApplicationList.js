@@ -61,7 +61,7 @@ class ApplicationList extends Component {
         onTabChange={this.handleTabChange}
         className={styles.antTabs}
       >
-        {/* {children} */}
+        {children}
         {/* <Switch>
           {routes.map(item => (
             <Route key={item.key} path={item.path} component={item.component} exact={item.exact} />
