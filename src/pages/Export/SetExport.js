@@ -60,6 +60,9 @@ class ExportAdd extends PureComponent {
     console.log("avatarpic=============",avatarpic)
     return avatarpic;
   }
+  handleCategoryChange = (source)=>{
+    console.log("source===============",source)
+  }
   //封号
   sealNumber = () => {
     const {
@@ -107,10 +110,17 @@ class ExportAdd extends PureComponent {
                     {data.username}
                   </Form.Item>
                 </Col>
+                <Col span={0}>
+                  <Form.Item>
+                    {getFieldDecorator('id',{initialValue: data.id})(
+                      <Input />
+                    )}
+                  </Form.Item>
+                </Col>
                 <Col span={8}>
                   <Form.Item label={fieldLabels.source}>
                     {getFieldDecorator('source', {
-                      initialValue: fieldSelect[data.source]
+                      initialValue: data.source+'',
                     })(
                       <Select placeholder="请选择来源" style={{ width: 120 }}>
                         <Option value="1">7m内部专家</Option>
@@ -146,7 +156,7 @@ class ExportAdd extends PureComponent {
                 <Col span={24}>
                   <Form.Item label={fieldLabels.level}>
                     {getFieldDecorator('level', {
-                      initialValue: level[data.level],
+                      initialValue: data.level+'',
                       rules: [{ required: true, message: '请输入称号' }]
                     })(
                       <Select placeholder="请输入称号" style={{ width: 360 }}>
