@@ -32,9 +32,9 @@ export default {
   'menu.export.exportList': '专家列表',
   'menu.export.exportUpdate': '专家设置',
   'menu.export.exportAdd': '添加专家',
-  'menu.export.applicationList': '专家申请审核列表',
-  'menu.export.applicationList.exportapplicationlist': '专家申请审核列表(申请列表)',
-  'menu.export.applicationList.locklist': '专家申请审核列表（封号）',
+  'menu.export.application': '专家申请审核列表',
+  'menu.export.application.exportlist': '申请列表',
+  'menu.export.application.locklist': '封号',
   'menu.export.applicationDetail': '查看详情',
   'menu.export.statisticsList': '专家统计',
 

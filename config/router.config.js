@@ -182,27 +182,26 @@ export default [
           },
           //专家申请审核列表
           {
-            path: '/export/application-list',
-            name: 'applicationList',
+            path: '/export/application',
+            name: 'application',
             component: './Export/ApplicationList',
             routes:[
               {
-                path:'/export/application-list',
-                hideInMenu: true,
-                redirect: '/export/application-list/export-application-list',
+                path:'/export/application',
+                redirect: '/export/application/exportlist',
               },
               {
-                path:'/export/application-list/export-application-list',
-                hideInMenu: true,
+                path:'/export/application/exportlist',
+                name:'exportlist',
                 component:'./Export/ExportApplicationList',
               },
               {
-                path:'/export/application-list/lock-list',
-                hideInMenu: true,
+                path:'/export/application/locklist',
+                name:'locklist',
                 component:'./Export/Locklist',
               },
               {
-                path: '/export/application-list/application-detail',
+                path: '/export/application/application-detail',
                 hideInMenu: true,
                 component: './Export/ApplicationDetail',
               },
