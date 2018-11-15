@@ -236,7 +236,7 @@ lockSealNumber = (id,nickname,source) => {
             <div className={styles.tableListForm}>{this.renderSimpleForm()}</div>
             <Table
               loading={loading}
-              rowKey="id"
+              rowKey={(r,i)=>(i)}
               dataSource={data.list}
               columns={this.columns}
               pagination={paginationProps}
