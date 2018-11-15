@@ -5,7 +5,6 @@ import { connect } from 'dva';
 import { Row, Col, Card, Form, Input, Select, Icon, Button, DatePicker, Table, Modal, Alert } from 'antd';
 import PageHeaderWrapper from '@/components/PageHeaderWrapper';
 import styles from './style.less';
-import { recommendType, status, level, sort } from '@/pages/config'
 
 const FormItem = Form.Item;
 const sourceArr = ['','7m内部专家','b端SportsDT']

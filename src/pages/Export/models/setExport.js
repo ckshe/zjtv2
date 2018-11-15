@@ -1,4 +1,4 @@
-import { getExpertDtail, updateLockStatus, expertUpdate} from '@/services/api';
+import { getExpertDtail, updateLockStatus, expertUpdate } from '@/services/api';
 import router from 'umi/router';
 import { message } from 'antd';
 export default {
@@ -7,13 +7,13 @@ export default {
   state: {
     data: {
     },
-    review:'',
+    review: '',
   },
 
   effects: {
     *getExpertDtail({ payload }, { call, put }) {
       console.log("payload====", payload)
-      const response = yield call(getExpertDtail, payload);      yield put({
+      const response = yield call(getExpertDtail, payload); yield put({
         type: 'save',
         payload: response.data,
       });
@@ -21,17 +21,15 @@ export default {
     *updateLockStatus({ payload }, { call, put }) {
       const response = yield call(updateLockStatus, payload);
       console.log(response)
-      if (response.status == 200) {
-        if (response.status == "200") {
-          message.success("封号成功", 1, () => {
-            router.push({
-              pathname: "/export/export-list"
-            })
+      if (response.status == "200") {
+        message.success("封号成功", 1, () => {
+          router.push({
+            pathname: "/export/export-list"
           })
-        } else {
-          message.error("封号失败", 1, () => {
-          })
-        }
+        })
+      } else {
+        message.error("封号失败", 1, () => {
+        })
       }
     },
     *expertUpdate({ payload }, { call, put }) {
@@ -53,18 +51,18 @@ export default {
 
   reducers: {
     save(state, action) {
-    	if(action.payload=="review"){
-    		return {
-    		  ...state,
-    		  review: action.payload,
-    		};
-    	}else{
-    		return {
-    		  ...state,
-    		  data: action.payload,
-    		  review:''
-    		};
-    	}
+      if (action.payload == "review") {
+        return {
+          ...state,
+          review: action.payload,
+        };
+      } else {
+        return {
+          ...state,
+          data: action.payload,
+          review: ''
+        };
+      }
     },
   },
 };
