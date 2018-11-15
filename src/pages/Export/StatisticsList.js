@@ -13,7 +13,7 @@ const FormItem = Form.Item;
 const { Option } = Select;
 const { TextArea } = Input;
 
-const sourceArr = ['', '7m内部专家', 'b端SportsDT']
+const sourceArr = ['全部', '7m内部专家', 'b端SportsDT']
 @Form.create()
 /* eslint react/no-multi-comp:0 */
 @connect(({ statisticslist, loading }) => ({
@@ -63,6 +63,7 @@ class StatisticsList extends PureComponent {
       if (err) return;
       const values = {
         ...fieldsValue,
+        sort:e.currentTarget.getAttribute('data-value')
       };
       this.setState({
         formValues: values,
@@ -73,8 +74,6 @@ class StatisticsList extends PureComponent {
       });
     });
   };
-
-
   //table表头
   columns = [
     {
@@ -162,95 +161,74 @@ class StatisticsList extends PureComponent {
             </FormItem>
           </Col>
           <Col md={8} sm={24}>
-            <FormItem label="称号">
-              {getFieldDecorator('level')(
-                <Select placeholder="请输入">
-                  <Option value="0">全部</Option>
-                  <Option value="1">精英玩家</Option>
-                  <Option value="2">7M分析师</Option>
-                  <Option value="4">好波名家</Option>
-                </Select>
-              )}
+            <FormItem label="真实姓名">
+              {getFieldDecorator('name')(<Input placeholder="请输入" />)}
             </FormItem>
           </Col>
         </Row>
         <Row gutter={{ md: 8, lg: 24, xl: 48 }}>
           <Col md={8} sm={24}>
-            <FormItem label="类型">
-              {getFieldDecorator('status')(
-                <Select placeholder="请输入">
-                  <Option value="1">让球胜负</Option>
-                  <Option value="2">大小球</Option>
-                  <Option value="3">胜平负</Option>
-                </Select>
-              )}
-            </FormItem>
-          </Col>
-          <Col md={12} sm={24}>
             <FormItem label="选择日期">
               {getFieldDecorator('date')(<RangePicker style={{ width: '100%' }} placeholder={['开始日期', '结束日期']} />)}
             </FormItem>
           </Col>
-        </Row>
-        <Row gutter={{ md: 8, lg: 24, xl: 48 }}>
           <Col md={8} sm={24}>
-            <FormItem label="状态">
-              {getFieldDecorator('status')(
+            <FormItem label="专家来源">
+              {getFieldDecorator('source')(
                 <Select placeholder="请输入">
-                  <Option value="0">正常</Option>
-                  <Option value="1">发布者撤销</Option>
-                  <Option value="2">管理员撤销</Option>
-                  <Option value="3">系统自动撤销</Option>
+                  <Option value="0">全部</Option>
+                  <Option value="1">7m内部专家</Option>
+                  <Option value="2">b端SportsDT</Option>
                 </Select>
               )}
             </FormItem>
           </Col>
           <Col md={8} sm={24}>
-            <FormItem label="主队名">
-              {getFieldDecorator('home_team')(<Input placeholder="请输入" />)}
-            </FormItem>
-          </Col>
-          <Col md={8} sm={24}>
-            <FormItem label="客队名">
-              {getFieldDecorator('away_team')(<Input placeholder="请输入" />)}
-            </FormItem>
+            <div style={{ overflow: 'hidden' }}>
+              <div style={{ marginBottom: 24 }}>
+                <Button type="primary" htmlType="submit">
+                  查询
+            </Button>
+                <Button style={{ marginLeft: 8 }} onClick={this.handleFormReset}>
+                  重置
+            </Button>
+              </div>
+            </div>
           </Col>
         </Row>
-        <Row gutter={{ md: 8, lg: 24, xl: 48 }}>
-          <Col md={8} sm={24}>
-            <FormItem label="开赛时间">
-              {getFieldDecorator('match_time')(
-                <DatePicker format={dateFormat} />
-              )}
-            </FormItem>
-          </Col>
-          <Col md={8} sm={24}>
-            <FormItem label="排序">
-              {getFieldDecorator('sort')(
-                <Select placeholder="请输入">
-                  <Option value="1">按发布时间倒序排序</Option>
-                  <Option value="2">按发布时间正序排序</Option>
-                  <Option value="3">按解锁人数倒序排序</Option>
-                  <Option value="4">按解锁人数正序排序</Option>
-                  <Option value="5">按M钻收入倒序排序</Option>
-                  <Option value="6">按M钻收入正序排序</Option>
-                </Select>)}
-            </FormItem>
+        <Row style={{ marginLeft: -32, marginRight: -32, padding: -10 }}>
+          <Col span={24}>
+            <div className={styles.order} style={{ height: 20 }}>
+              <span className={styles.line}></span>
+            </div>
           </Col>
         </Row>
-        <div style={{ overflow: 'hidden' }}>
-          <div style={{ float: 'right', marginBottom: 24 }}>
-            <Button type="primary" htmlType="submit">
-              查询
-            </Button>
-            <Button style={{ marginLeft: 8 }} onClick={this.handleFormReset}>
-              重置
-            </Button>
-            <a style={{ marginLeft: 8 }} onClick={this.toggleForm}>
-              收起 <Icon type="up" />
-            </a>
-          </div>
-        </div>
+        <Row gutter={{ md: 8 }} style={{ marginBottom: 20 }}>
+          <Col span={3}>
+            <Button block onClick={this.handleSearch}  data-value='1'>按近7天胜率排序</Button>
+          </Col>
+          <Col span={3}>
+            <Button block onClick={this.handleSearch}  data-value='2'>按近30天胜率排序</Button>
+          </Col>
+          <Col span={3}>
+            <Button block onClick={this.handleSearch} data-value='3'>按生涯胜率排序</Button>
+          </Col>
+          <Col span={3}>
+            <Button block onClick={this.handleSearch} data-value='4'>按剩余M钻排序</Button>
+          </Col>
+          <Col span={3}>
+            <Button block onClick={this.handleSearch} data-value='5'>按已发布推介排序</Button>
+          </Col>
+          <Col span={3}>
+            <Button block onClick={this.handleSearch} data-value='6'>按撤销推介排序</Button>
+          </Col>
+          <Col span={3}>
+            <Button block onClick={this.handleSearch} data-value='7'>按撤销推介排序</Button>
+          </Col>
+          <Col span={3}>
+            <Button block onClick={this.handleSearch} data-value='8'>按撤销推介排序</Button>
+          </Col>
+        </Row>
       </Form>
     );
   }
@@ -274,7 +252,7 @@ class StatisticsList extends PureComponent {
                 dataSource={data.list}
                 columns={this.columns}
                 pagination={false}
-                // onChange={this.handleStandardTableChange}
+              // onChange={this.handleStandardTableChange}
               />
             </div>
           </Card>
