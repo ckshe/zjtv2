@@ -8,7 +8,7 @@ import styles from './style.less';
 import { recommendType, status, level, sort } from '@/pages/config'
 
 const FormItem = Form.Item;
-const sourceArr = ['','7m内部专家','sportsDt']
+const sourceArr = ['','7m内部专家','b端SportsDT']
 @Form.create()
 /* eslint react/no-multi-comp:0 */
 @connect(({ exportlist, loading }) => ({
@@ -205,7 +205,8 @@ class ExportList extends PureComponent {
       align: 'center',
       render: (_, record) => (
         <Fragment>
-          <div><a onClick={() => this.gotoSetExport(record.id)}>专家设置</a></div>
+          {record.is_lock=='1'?<div className={styles.colorRed}>封号</div>:<div><a onClick={() => this.gotoSetExport(record.id)}>专家设置</a></div>}
+          
         </Fragment>
       )
     },

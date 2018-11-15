@@ -19,7 +19,7 @@ const fieldLabels = {
   summary: '专家简介',
   level: '专家称号'
 };
-const fieldSelect = ['', '7m内部专家', 'sportsDt']
+const fieldSelect = ['', '7m内部专家', 'b端SportsDT']
 
 /* eslint react/no-multi-comp:0 */
 @connect(({ setexport, loading }) => ({

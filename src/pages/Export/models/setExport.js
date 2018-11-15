@@ -22,10 +22,16 @@ export default {
       const response = yield call(updateLockStatus, payload);
       console.log(response)
       if (response.status == 200) {
-        yield put({
-          type: 'save',
-          payload: 'review',
-        });
+        if (response.status == "200") {
+          message.success("封号成功", 1, () => {
+            router.push({
+              pathname: "/export/export-list"
+            })
+          })
+        } else {
+          message.error("封号失败", 1, () => {
+          })
+        }
       }
     },
     *expertUpdate({ payload }, { call, put }) {
