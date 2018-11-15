@@ -205,7 +205,8 @@ class ExportList extends PureComponent {
       align: 'center',
       render: (_, record) => (
         <Fragment>
-          <div><a onClick={() => this.gotoSetExport(record.id)}>专家设置</a></div>
+          {record.is_lock=='1'?<div className={styles.colorRed}>封号</div>:<div><a onClick={() => this.gotoSetExport(record.id)}>专家设置</a></div>}
+          
         </Fragment>
       )
     },
