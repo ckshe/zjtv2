@@ -36,6 +36,32 @@ class LockList extends PureComponent {
     });
   }
 
+  // 如果审核请求触发成功时 models的state发生变化 就会执行该生命周期函数
+    // 如果models的state 的review有值则重新请求列表数据
+    componentWillReceiveProps(nextProps){
+    	console.log("nextProps",nextProps)
+        // const { dispatch } = this.props;
+        if(nextProps.locklist.review){
+          const {
+            dispatch,
+            form
+          } = this.props;
+          form.validateFields((err, fieldsValue) => {
+            if (err) return;
+            const values = {
+              ...fieldsValue,
+            };
+            this.setState({
+              formValues: values,
+            });
+            dispatch({
+              type: 'locklist/getLockList',
+              payload: values,
+            });
+          });
+        }
+    }
+
   // StandardTable组件里面的Table组件 点击分页触发
   handleStandardTableChange = pagination => {
     const { dispatch } = this.props;

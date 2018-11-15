@@ -1,4 +1,5 @@
-import { lockList,updateLockStatus } from '@/services/api';
+import { lockList, updateLockStatus } from '@/services/api';
+import { message } from 'antd';
 function consumeListForm(params) {
   var buffer = { page_size: 10, page: 1 };
   typeof (params.page_size) != 'undefined' ? buffer.page_size = params.page_size : '';
@@ -22,7 +23,7 @@ export default {
         total: 0
       },
     },
-    review:'',
+    review: '',
   },
 
   effects: {
@@ -38,30 +39,33 @@ export default {
     },
     *updateLockStatus({ payload }, { call, put }) {
       const response = yield call(updateLockStatus, payload);
-      console.log(response)
       if (response.status == 200) {
+        message.success("解封成功", 1, () => {})
         yield put({
           type: 'save',
           payload: 'review',
         });
+      } else {
+        message.error("解封失败", 1, () => {
+        })
       }
-    },
+    }
   },
 
   reducers: {
     save(state, action) {
-    	if(action.payload=="review"){
-    		return {
-    		  ...state,
-    		  review: action.payload,
-    		};
-    	}else{
-    		return {
-    		  ...state,
-    		  data: action.payload,
-    		  review:''
-    		};
-    	}
+      if (action.payload == "review") {
+        return {
+          ...state,
+          review: action.payload,
+        };
+      } else {
+        return {
+          ...state,
+          data: action.payload,
+          review: ''
+        };
+      }
     },
   },
 };

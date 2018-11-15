@@ -23,13 +23,13 @@ export default {
       console.log(response)
       if (response.status == 200) {
         if (response.status == "200") {
-          message.success("封号成功", 2, () => {
+          message.success("封号成功", 1, () => {
             router.push({
               pathname: "/export/export-list"
             })
           })
         } else {
-          message.error("封号失败", 2, () => {
+          message.error("封号失败", 1, () => {
           })
         }
       }
