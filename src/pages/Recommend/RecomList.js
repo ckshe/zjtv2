@@ -56,7 +56,7 @@ class TableList extends PureComponent {
 // 如果审核请求触发成功时 models的state发生变化 就会执行该生命周期函数
     // 如果models的state 的review有值则重新请求列表数据
     componentWillReceiveProps(nextProps){
-    	console.log("nextProps",nextProps)
+    	// console.log("nextProps",nextProps)
         const { dispatch } = this.props;
         if(nextProps.recommendlist.review){
             dispatch({
@@ -110,11 +110,16 @@ class TableList extends PureComponent {
   
   //查看详情
 	seenDetails = (id,content) =>{
+    console.log("content============",content)
+    const { form } = this.props;
 		this.setState({
       visible: true,
       id:id,
       content:content,
     });
+    form.setFieldsValue({
+      'content':content
+    })
 	}
 	//跳转页面
 	gotoRecommondDetails(id) {
@@ -394,6 +399,7 @@ class TableList extends PureComponent {
     current: parseInt(data.pagination.current),
     total: parseInt(data.pagination.total),
     };
+    console.log("我被渲染了===============",this.state.content)
     return (
 	    <Fragment>
 	      <PageHeaderWrapper title="推介列表">
@@ -429,7 +435,7 @@ class TableList extends PureComponent {
 		    >
 	       <Form onSubmit={this.handleOk} layout="horizontal" accept-charset ='UTF-8'>
 				   	<FormItem label="主队名">
-              {getFieldDecorator('content',{initialValue : this.state.content })(<TextArea  rows={4} />)}
+              {getFieldDecorator('content')(<TextArea   rows={4} />)}
             </FormItem>
             <div className={styles.modalFoot}>
 	            <Button key="back" onClick={this.onCancel}>取消</Button>,
